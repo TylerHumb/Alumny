@@ -15,7 +15,7 @@ def loadJobTestData(conn, folderPath):
                     if company:
                         id = userController.addEmployer(conn, company.group(1))
                         desc = re.search(r'^Description:\s*(.*)', content, re.MULTILINE | re.DOTALL)
-                        userController.addJobDesc(conn, desc.group(1))
+                        userController.addJobDesc(conn, desc.group(1), id)
     folderPathEmployees = os.path.join(folderPath, 'employees')
     for root, dirs, files in os.walk(folderPathEmployees):
         for file in files:

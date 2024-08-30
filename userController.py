@@ -30,18 +30,16 @@ def addEmployer(conn, employer):
         conn.commit()
         return cur.lastrowid
     
-def addJobDesc(conn, jobDesc):
+def addJobDesc(conn, jobDesc, employerId):
     check_sql = ''' SELECT Listing_ID FROM Job_Listing WHERE Plaintext = ? '''
     cur = conn.cursor()
     cur.execute(check_sql, (jobDesc,))
     user = cur.fetchone()
     if user:
-        print("Job already exists")
         return user[0]
     else:
-        print("Job does not exist")
-        sql = ''' INSERT INTO Job_Listing(Plaintext) VALUES(?) '''
-        cur.execute(sql, (jobDesc,))
+        sql = ''' INSERT INTO Job_Listing(Plaintext, Employer_ID) VALUES(?, ?) '''
+        cur.execute(sql, (jobDesc, employerId))
         conn.commit()
         return cur.lastrowid
     
