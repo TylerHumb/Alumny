@@ -3,7 +3,8 @@ import re
 import userController
 
 def loadJobTestData(conn, folderPath):
-    for root, dirs, files in os.walk(folderPath):
+    folderPathJobs = os.path.join(folderPath, 'jobs')
+    for root, dirs, files in os.walk(folderPathJobs):
         for file in files:
             if file.endswith(".txt"):
                 filePath = os.path.join(root, file)
@@ -13,17 +14,23 @@ def loadJobTestData(conn, folderPath):
                     # Test data without company names are not included
                     if company:
                         id = userController.addEmployer(conn, company.group(1))
-                        print(company.group(1), id)
                         desc = re.search(r'^Description:\s*(.*)', content, re.MULTILINE | re.DOTALL)
-                        if desc:
-                            print(desc.group(1))
                         userController.addJobDesc(conn, desc.group(1))
-
-
+    folderPathEmployees = os.path.join(folderPath, 'employees')
+    for root, dirs, files in os.walk(folderPathEmployees):
+        for file in files:
+            if file.endswith(".txt"):
+                filePath = os.path.join(root, file)
+                with open(filePath, "r", encoding='utf-8') as f:
+                    content = f.read()
+                    name = re.search(r'^Name:\s*(.*)', content, re.MULTILINE)
+                    if name:
+                        plainText = re.search(r'^Plaintext:\s*(.*)', content, re.MULTILINE | re.DOTALL)
+                        id = userController.addEmployee(conn, name.group(1), plainText.group(1))
 
 
 #Just to load the data and for testing purposes can be deleted later
 if __name__ == '__main__':
-    folderPath = 'testData/jobs'
+    folderPath = 'testData'
     conn = userController.createConnection('Alumny.db')
     loadJobTestData(conn, folderPath)

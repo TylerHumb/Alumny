@@ -44,3 +44,16 @@ def addJobDesc(conn, jobDesc):
         cur.execute(sql, (jobDesc,))
         conn.commit()
         return cur.lastrowid
+    
+def addEmployee(conn, name, plaintext):
+    check_sql = ''' SELECT Employee_ID FROM Employee WHERE Name = ? '''
+    cur = conn.cursor()
+    cur.execute(check_sql, (name,))
+    user = cur.fetchone()
+    if user:
+        return user[0]
+    else:
+        sql = ''' INSERT INTO Employee(Name, Plaintext) VALUES(?, ?) '''
+        cur.execute(sql, (name, plaintext))
+        conn.commit()
+        return cur.lastrowid
