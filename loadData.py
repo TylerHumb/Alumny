@@ -1,5 +1,6 @@
 import os
 import re
+import csv
 import userController
 
 def loadJobTestData(conn, folderPath):
@@ -28,9 +29,19 @@ def loadJobTestData(conn, folderPath):
                         plainText = re.search(r'^Plaintext:\s*(.*)', content, re.MULTILINE | re.DOTALL)
                         id = userController.addEmployee(conn, name.group(1), plainText.group(1))
 
+def loadSkillData(conn,folderPath):
+    skillspath = folderPath + '/Skills.csv'
+    SkillsList = open(skillspath, 'r')
+    csv_reader = csv.reader(SkillsList,delimiter=',')
+    skill_id = 1
+    for row in csv_reader:
+        userController.addSkill(conn,row,skill_id)
+        skill_id += 1
+
 
 #Just to load the data and for testing purposes can be deleted later
 if __name__ == '__main__':
     folderPath = 'testData'
     conn = userController.createConnection('Alumny.db')
     loadJobTestData(conn, folderPath)
+    loadSkillData(conn,folderPath)

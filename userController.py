@@ -55,3 +55,9 @@ def addEmployee(conn, name, plaintext):
         cur.execute(sql, (name, plaintext))
         conn.commit()
         return cur.lastrowid
+#Row is a line from the csv file, first entry is the skill name/desc and the second is its category    
+def addSkill(conn,row,id):
+    query = '''INSERT INTO Skills_List VALUES(?,?,?)'''
+    cur = conn.cursor()
+    cur.execute(query, (id,row[0],row[1]))
+    conn.commit()
