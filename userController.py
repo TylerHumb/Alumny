@@ -61,3 +61,11 @@ def addSkill(conn,row,id):
     cur = conn.cursor()
     cur.execute(query, (id,row[0],row[1]))
     conn.commit()
+
+def getAllSkills(conn):
+    query = '''SELECT DISTINCT Category Skill FROM Skills_List'''
+    cur = conn.cursor()
+    cur.execute(query)
+    results = cur.fetchall()
+    skills = [row[0] for row in results]
+    return skills
