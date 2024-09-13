@@ -69,3 +69,12 @@ def getAllSkills(conn):
     results = cur.fetchall()
     skills = [row[0] for row in results]
     return skills
+
+def getSkillsByCategories(conn, categories):
+    placeholders = ','.join('?' * len(categories))
+    query = f'''
+    SELECT DISTINCT Skill_Name FROM Skills_List WHERE Category IN ({placeholders}) ORDER BY Skill_Name'''
+    cur = conn.cursor()
+    cur.execute(query, categories)
+    skills = [row[0] for row in cur.fetchall()]
+    return skills
