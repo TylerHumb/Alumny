@@ -3,11 +3,6 @@ import os
 from dotenv import load_dotenv
 import userController
 
-load_dotenv()
-api_key = os.getenv('api_key_anthropic')
-
-client = anthropic.Anthropic(api_key=api_key)
-
 def findSkillCategories(categoryList, text):
     prompt = f""" Given the following list of skill categories:
     {', '.join(categoryList)}
@@ -26,7 +21,7 @@ def findSkillCategories(categoryList, text):
     message = client.messages.create(
         model="claude-3-5-sonnet-20240620",
         max_tokens=4000,
-        temperature=0.2,
+        temperature=0.15,
         messages=[
             {"role": "user", "content": prompt}
         ]
@@ -66,7 +61,7 @@ def findSkills(skillList, categoryList, text):
     message = client.messages.create(
         model="claude-3-5-sonnet-20240620",
         max_tokens=4000,
-        temperature=0.2,
+        temperature=0.15,
         messages=[
             {"role": "user", "content": prompt}
         ]
@@ -79,16 +74,20 @@ def findSkills(skillList, categoryList, text):
 
 
 if __name__ == "__main__":
+    load_dotenv()
+    api_key = os.getenv('api_key_anthropic')
+    client = anthropic.Anthropic(api_key=api_key)
+
     conn = userController.createConnection('Alumny.db')
+
     categoryList = userController.getAllSkills(conn)
     sampleText = userController.getPlainText(conn, 1)
-
+    
     foundSkillsCategories = findSkillCategories(categoryList, sampleText)
     print("Skills categories found in the text:")
     for skill in foundSkillsCategories:
         print(f"- {skill}")
-    list = ["Software development and programming languages", "Network security and virtual private network VPN software"]
-    skillsList = userController.getSkillsByCategories(conn, list)
+    skillsList = userController.getSkillsByCategories(conn, foundSkillsCategories)
 
     foundSkills = findSkills(skillsList, categoryList, sampleText)
     print("Skills found in the text:")
