@@ -45,3 +45,4 @@ if __name__ == '__main__':
     conn = userController.createConnection('Alumny.db')
     loadJobTestData(conn, folderPath)
     loadSkillData(conn,folderPath)
+    userController.closeConnection(conn)

@@ -78,3 +78,10 @@ def getSkillsByCategories(conn, categories):
     cur.execute(query, categories)
     skills = [row[0] for row in cur.fetchall()]
     return skills
+
+def getPlainText(conn, employer_id):
+    query = '''SELECT Plaintext FROM Employee WHERE Employee_ID = ?'''
+    cur = conn.cursor()
+    cur.execute(query, (employer_id,))
+    result = cur.fetchone()
+    return result[0]

@@ -81,8 +81,7 @@ def findSkills(skillList, categoryList, text):
 if __name__ == "__main__":
     conn = userController.createConnection('Alumny.db')
     categoryList = userController.getAllSkills(conn)
-
-    sampleText = "Name: John Doe Plaintext: IT Grad Student Transforming Technology Greater Sydney Area Summary John is an aspiring IT professional currently pursuing his master's in Information Technology at the University of Sydney. He has over 2 years of experience in various internships and part-time roles. John has worked with start-ups and small businesses to implement technology solutions that streamline operations and enhance user experiences. He is passionate about software development and cybersecurity, with a strong foundation in programming languages such as Python, Java, and C++. His experience includes working on projects that integrate AI for data analysis, providing actionable insights for business growth. John aims to further specialize in cloud computing and machine learning, applying his knowledge to real-world challenges. Experience ABC Tech SolutionsSoftware Development Intern July 2023 - Present (1 year 2 months) Sydney, Australia Tech Start-UpPart-time IT Support Specialist January 2022 - June 2023 (1 year 6 months) Sydney, Australia Certifications CompTIA Security+ AWS Certified Solutions Architect Microsoft Certified: Azure Fundamentals Skills Software Development Cybersecurity Cloud Computing."
+    sampleText = userController.getPlainText(conn, 1)
 
     foundSkillsCategories = findSkillCategories(categoryList, sampleText)
     print("Skills categories found in the text:")
@@ -96,3 +95,5 @@ if __name__ == "__main__":
     for skill in foundSkills:
         print(f"- {skill}")
     print(skillsList)
+    
+    userController.closeConnection(conn)
