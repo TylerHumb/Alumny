@@ -1,0 +1,67 @@
+html {
+    font-family: Arial, Helvetica, sans-serif;
+}
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+form > div {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+input {
+    display: block;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 5px;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    margin-top: 5%;
+    align-items: center;}
+
+.successMessage {
+    display: none;
+}
+
+.button {
+    align-self: center;
+    width: 120px;
+    padding: 10px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 1px solid #044d9c;
+}
+
+.submit:hover {
+    background-color: #044d9c;
+    color: azure;
+}
+
+.formContainer {
+    background-color: #E6EFF9;
+    border: 1px solid #044d9c;
+    padding: 50px;
+    border-radius: 5px;
+}
+
+.linkCenter {
+    display: grid;
+    grid-template-rows: auto auto;
+    gap: 10px;
+}
+
+h1 {
+    text-align: center;
+}
+
+.instruction {
+    font-style: italic;
+    size: 80em;
+}
