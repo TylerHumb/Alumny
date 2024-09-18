@@ -85,3 +85,33 @@ def getPlainText(conn, employer_id):
     cur.execute(query, (employer_id,))
     result = cur.fetchone()
     return result[0]
+
+def addSkillToEmployee(conn, employee_id, skill):
+    """
+    Insert the skill into the Employee_Skills table for the given employee.
+    """
+    try:
+        cur = conn.cursor()
+        cur.execute('''
+            INSERT INTO Employee_Skills (Employee_ID, Skill_Name)
+            VALUES (?, ?)
+        ''', (employee_id, skill))
+        conn.commit()
+        print(f"Skill '{skill}' added to employee ID {employee_id} in Employee_Skills.")
+    except sqlite3.Error as e:
+        print(f"Error adding skill '{skill}' for employee ID {employee_id} in Employee_Skills: {e}")
+
+def addSkillToTemp(conn, employee_id, skill):
+    """
+    Insert the skill into the Temp_Skills table for the given employee.
+    """
+    try:
+        cur = conn.cursor()
+        cur.execute('''
+            INSERT INTO Temp_Skills (Employee_ID, Skill_Name)
+            VALUES (?, ?)
+        ''', (employee_id, skill))
+        conn.commit()
+        print(f"Skill '{skill}' added to employee ID {employee_id} in Temp_Skills.")
+    except sqlite3.Error as e:
+        print(f"Error adding skill '{skill}' for employee ID {employee_id} in Temp_Skills: {e}")
