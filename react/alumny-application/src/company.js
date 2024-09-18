@@ -1,5 +1,6 @@
 import React from "react";
 import './style.css';
+import { Link } from "react-router-dom";
 
 function Company() {
   return (
@@ -8,7 +9,7 @@ function Company() {
         <h1>Company</h1>
         <p className="instruction">
           Input your job description to start matching! <br /> 
-          Not looking for an employee? Click <a href="/employee">here</a> to upload your CV.
+          Not looking for an employee? Click <Link to="/employee">here</Link> to upload your CV.
         </p>
         <div>
           <label htmlFor="compName">Company name</label>
@@ -25,10 +26,10 @@ function Company() {
         <div>
           <label htmlFor="jobDescription">Job Description</label>
           <input type="file" id="jobDescription" name="jobDescription" accept=".csv" />
-          <textarea id="jobDesc" name="jobDesc" cols="30" rows="3"></textarea>
+          <textarea id="jobDesc" name="jobDesc" cols="30" rows='5'></textarea>
         </div>
         <span className="successMessage">Successfully submitted!</span>
-        <input type="submit" className="button" value="Submit" />
+        <input type="submit" className="formbutton" value="Submit" />
       </form>
     </div>
   );

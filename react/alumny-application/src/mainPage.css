@@ -7,7 +7,7 @@
     padding: 0;
 }
 
-body {
+.mainpageContainer {
     background: #f6f5f7;
     font-family: 'Montserrat', sans-serif;
     margin: 0;
@@ -17,18 +17,19 @@ h1, h2 {
     font-weight: bold;
 }
 
-p {
+.mainpageContainer p {
     font-size: 14px;
     font-weight: 100;
     line-height: 20px;
     letter-spacing: 0.5px;
     margin: 20px 0 30px;
 }
-header {
+.mainpageHeader {
     background-color: #583D72;
+    padding: 10px;
 }
 
-button {
+.mainpageContainer button {
     border-radius: 20px;
     border: 1px solid #FFA53D;
     background-color: #FFA53D;
@@ -41,11 +42,11 @@ button {
     transition: transform 80ms ease-in;
 }
 
-button:active {
+.mainpageContainer button:active {
     transform: scale(0.95);
 }
 
-button:focus {
+.mainpageContainer button:focus {
     outline: none;
 }
 
@@ -99,7 +100,7 @@ button:focus {
     margin-bottom: 10px;
 }
 
-footer {
+.mainpageContainer footer {
     background-color: #583D72;
     color: #FFA53D;
     padding: 20px;
@@ -110,11 +111,11 @@ footer {
     flex-wrap: wrap; /* Ensure the footer wraps on smaller screens */
 }
 
-footer p {
+.mainpageContainer footer p {
     margin: 10px 0;
 }
 
-footer a {
+.mainpageContainer footer a {
     color: #fff;
     text-decoration: none;
     margin: 0 10px;
