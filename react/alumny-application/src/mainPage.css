@@ -1,0 +1,147 @@
+/* Base styles */
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,800');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.mainpageContainer {
+    background: #f6f5f7;
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+}
+
+h1, h2 {
+    font-weight: bold;
+}
+
+.mainpageContainer p {
+    font-size: 14px;
+    font-weight: 100;
+    line-height: 20px;
+    letter-spacing: 0.5px;
+    margin: 20px 0 30px;
+}
+.mainpageHeader {
+    background-color: #583D72;
+    padding: 10px;
+}
+
+.mainpageContainer button {
+    border-radius: 20px;
+    border: 1px solid #FFA53D;
+    background-color: #FFA53D;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 12px 45px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: transform 80ms ease-in;
+}
+
+.mainpageContainer button:active {
+    transform: scale(0.95);
+}
+
+.mainpageContainer button:focus {
+    outline: none;
+}
+
+.main-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+    max-width: 100%;
+    text-align: center;
+    margin: 20px auto;
+}
+
+.start-matching {
+    background-color: #FFA53D;
+    color: white;
+    padding: 12px 45px;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    margin: 20px 0;
+}
+
+.student-recommendations {
+    margin-top: 40px;
+}
+
+.recommendation-list {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+}
+
+.recommendation-card {
+    background-color: #f9f9f9;
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    flex: 1; /* Allow the cards to expand to fill available space */
+    margin: 0 10px;
+}
+
+.recommendation-card img {
+    width: 100px;
+    height: 100px;
+    background-color: #eee;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.mainpageContainer footer {
+    background-color: #583D72;
+    color: #FFA53D;
+    padding: 20px;
+    text-align: center;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap; /* Ensure the footer wraps on smaller screens */
+}
+
+.mainpageContainer footer p {
+    margin: 10px 0;
+}
+
+.mainpageContainer footer a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+.footer-section {
+    margin: 10px 20px;
+}
+
+/* Responsive styles for smaller screens */
+@media (max-width: 768px) {
+    .recommendation-list {
+        flex-direction: column;
+        gap: 30px;
+    }
+    .recommendation-card {
+        width: 100%;
+    }
+}
+
+.footer-element {
+    display: flex;
+    flex-direction: column;
+}
+
+.match-banner {
+    padding: 5%;
+    border: 2px solid #583D72;
+}

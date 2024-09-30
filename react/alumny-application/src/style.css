@@ -1,17 +1,14 @@
-html {
-    font-family: Arial, Helvetica, sans-serif;
-}
-form {
+.formContainer form {
     display: flex;
     flex-direction: column;
     gap: 4px;
 }
-form > div {
+.formContainer form > div {
     display: flex;
     align-items: center;
     gap: 20px;
 }
-input {
+.formContainer input {
     display: block;
     padding: 5px;
     margin: 5px;
@@ -28,7 +25,7 @@ body {
     display: none;
 }
 
-.button {
+.formbutton {
     align-self: center;
     width: 120px;
     padding: 10px;
@@ -38,12 +35,6 @@ body {
     cursor: pointer;
     border: 1px solid #044d9c;
 }
-
-.submit:hover {
-    background-color: #044d9c;
-    color: azure;
-}
-
 .formContainer {
     background-color: #E6EFF9;
     border: 1px solid #044d9c;
@@ -51,13 +42,7 @@ body {
     border-radius: 5px;
 }
 
-.linkCenter {
-    display: grid;
-    grid-template-rows: auto auto;
-    gap: 10px;
-}
-
-h1 {
+.formContainer h1 {
     text-align: center;
 }
 
