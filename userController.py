@@ -86,32 +86,46 @@ def getPlainText(conn, employer_id):
     result = cur.fetchone()
     return result[0]
 
-def addSkillToEmployee(conn, employee_id, skill):
+def addSkillToEmployee(conn, employee_id, skill, skill_id):
     """
     Insert the skill into the Employee_Skills table for the given employee.
     """
     try:
         cur = conn.cursor()
         cur.execute('''
-            INSERT INTO Employee_Skills (Employee_ID, Skill_Name)
-            VALUES (?, ?)
-        ''', (employee_id, skill))
+            INSERT INTO Employee_Skills (Employee_ID, Skill_Name, Skill_id)
+            VALUES (?, ?, ?)
+        ''', (employee_id, skill, skill_id))
         conn.commit()
         print(f"Skill '{skill}' added to employee ID {employee_id} in Employee_Skills.")
     except sqlite3.Error as e:
         print(f"Error adding skill '{skill}' for employee ID {employee_id} in Employee_Skills: {e}")
 
-def addSkillToTemp(conn, employee_id, skill):
+def addSkillToTemp(conn, employee_id, skill, category, skill_id):
     """
     Insert the skill into the Temp_Skills table for the given employee.
     """
     try:
         cur = conn.cursor()
         cur.execute('''
-            INSERT INTO Temp_Skills (Employee_ID, Skill_Name)
-            VALUES (?, ?)
-        ''', (employee_id, skill))
+            INSERT INTO Temp_Skills (Employee_ID, Skill_Name, Category, Skill_ID)
+            VALUES (?, ?, ?, ?)
+        ''', (employee_id, skill, category, skill_id))
         conn.commit()
-        print(f"Skill '{skill}' added to employee ID {employee_id} in Temp_Skills.")
+        print(f"Skill '{skill}' Category '{category}, added to employee ID {employee_id} in Temp_Skills.")
     except sqlite3.Error as e:
-        print(f"Error adding skill '{skill}' for employee ID {employee_id} in Temp_Skills: {e}")
+        print(f"Error adding skill '{skill}' Category '{category} for employee ID {employee_id} in Temp_Skills: {e}")
+
+def getSkillId(conn, skill):
+    query = '''SELECT Skill_ID FROM Skills_List WHERE Skill_Name = ?'''
+    cur = conn.cursor()
+    cur.execute(query, (skill,))
+    result = cur.fetchone()
+    return result[0]
+
+def insertSkill(conn, skill_name, category):
+    query = '''INSERT INTO Skills_List (Skill_Name, Category) VALUES (?, ?)'''
+    cur = conn.cursor()
+    cur.execute(query, (skill_name, category))
+    conn.commit()
+    return cur.lastrowid

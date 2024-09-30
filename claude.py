@@ -197,8 +197,15 @@ if __name__ == "__main__":
     # Insert skills into the appropriate tables
     for skill in foundSkills:
         if skill in skillsList:
-            userController.addSkillToEmployee(conn, employee_id, skill)  # Insert into Employee_Skills
+            skill_id = userController.getSkillId(conn, skill)
+            userController.addSkillToEmployee(conn, employee_id, skill, skill_id)  # Insert into Employee_Skills
         else:
-            userController.addSkillToTemp(conn, employee_id, skill)  # Insert into Temp_Skills
+            if ',' in skill:
+                skill, category = skill.split(',')
+                skill = skill.strip()
+                category = category.strip()
+                skill_id = userController.insertSkill(conn, skill, category)
+                userController.addSkillToTemp(conn, employee_id, skill, category, id)  # Insert into Temp_Skills
+                userController.addSkillToEmployee(conn, employee_id, skill, skill_id)  # Insert into Employee_Skills
 
     userController.closeConnection(conn)
