@@ -6,6 +6,7 @@
 }
 
 .signinH1 {
+	color: #583D72;
 	font-weight: bold;
 	margin: 0;
 	padding-bottom: 5px;
@@ -254,3 +255,36 @@ width: 100%;
 border-radius: 5px;
 border: 1px solid #ddd;
 }
+
+/* General heading styles for all headings */
+h1, h2, h3, h4, h5, h6 {
+	color: #583D72; /* Alumly purple color for headings */
+	font-family: 'Montserrat', sans-serif;
+  }
+  
+  /* Specific for the overlay heading */
+  .overlay h1 {
+	color: white; /* Keep the overlay headings white */
+	font-size: 24px;
+	font-weight: bold;
+  }
+  
+  /* Customize other heading levels if needed */
+  h2 {
+	color: #583D72; /* Same purple color for consistency */
+	font-size: 22px;
+  }
+  
+  h3 {
+	color: #583D72; /* Apply to smaller headings */
+	font-size: 20px;
+  }
+  
+  /* If you have a specific color for the overlay text */
+  .overlay p {
+	color: white;
+  }
+  
+  .tab button {
+	color: #FFA53D;
+  }

@@ -33,17 +33,15 @@ function SignIn() {
           <span className="signinSpan">or use your email for registration</span>
 
           {/* Tab Links */}
-          <div className="tab">
-            <button 
-              type="button" 
-              className={`tablinks ${activeTab === 'Student' ? 'active' : ''}`} 
+          <div className="tab-container">
+            <button
+              className={`tab-button ${activeTab === 'Student' ? 'active' : ''}`}
               onClick={() => handleTabChange('Student')}
             >
               Student
             </button>
-            <button 
-              type="button" 
-              className={`tablinks ${activeTab === 'Employer' ? 'active' : ''}`} 
+            <button
+              className={`tab-button ${activeTab === 'Employer' ? 'active' : ''}`}
               onClick={() => handleTabChange('Employer')}
             >
               Employer

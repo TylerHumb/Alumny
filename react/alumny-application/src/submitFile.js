@@ -10,6 +10,9 @@ function SubmitFile() {
   const [activeTab, setActiveTab] = useState('Student'); // Tab switcher
   const [selectedSkills, setSelectedSkills] = useState([]); // To manage selected skills
   const [formData, setFormData] = useState({
+    name: '',
+    dob: '',
+    address: '',
     bio: '',
     personality: '',
     motivations: '',
@@ -17,9 +20,10 @@ function SubmitFile() {
     frustrations: [],
     favoriteBrands: '',
     resume: null,
+    compName: '',
+    compEmail: '',
+    compSkill: '',
     jobTitle: '',
-    jobDescription: '',
-    requiredSkills: '',
     employerResume: null
   });
 
@@ -39,22 +43,22 @@ function SubmitFile() {
     if (type === 'application/pdf') {
       // Convert PDF to text
       const text = await convertPdfToText(file);
-      setFormData({ ...formData, resume: text });
-    } else if (type === 'text/plain') {
+      setFormData({ ...formData, [name]: text });
+    } else if (type === 'text/plain' || type === 'application/csv') {
       const reader = new FileReader();
       reader.onload = () => {
-        setFormData({ ...formData, resume: reader.result });
+        setFormData({ ...formData, [name]: reader.result });
       };
       reader.readAsText(file);
     } else {
-      alert('Only .txt and .pdf files are allowed.');
+      alert('Only .txt, .pdf, and .csv files are allowed.');
     }
   };
 
   // Convert PDF to text
   const convertPdfToText = async (file) => {
     const arrayBuffer = await file.arrayBuffer();
-    const pdfDoc = await getDocument.load(arrayBuffer);
+    const pdfDoc = await getDocument(arrayBuffer).promise;
     let text = '';
     const numPages = pdfDoc.numPages;
 
@@ -84,15 +88,40 @@ function SubmitFile() {
     setFormData({ ...formData, frustrations: newSkills });
   };
 
-  const handleSubmit = (e) => {
+  // Submit the data to the backend
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted', formData);
-    // Process the form data (send to backend or API)
+
+    const dataToSubmit = new FormData(); // FormData for file handling
+    Object.keys(formData).forEach((key) => {
+      if (formData[key]) {
+        dataToSubmit.append(key, formData[key]);
+      }
+    });
+
+    try {
+      const response = await fetch('/api/submit-profile', {
+        method: 'POST',
+        body: dataToSubmit
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Success:', result);
+        alert('Form submitted successfully');
+      } else {
+        console.error('Error:', response.statusText);
+        alert('Form submission failed');
+      }
+    } catch (error) {
+      console.error('Error submitting the form:', error);
+      alert('An error occurred during form submission');
+    }
   };
 
   return (
     <div className="submit-file-container">
-    <Navbar />
+        < Navbar />
       <h1>Submit Your Information</h1>
       <div className="tab-container">
         <button
@@ -113,6 +142,39 @@ function SubmitFile() {
         {activeTab === 'Student' ? (
           <>
             {/* Student Form */}
+            <div className="form-group">
+              <label htmlFor="name">Name:</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Enter your name"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="dob">Date of Birth:</label>
+              <input
+                type="date"
+                name="dob"
+                value={formData.dob}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="address">Address:</label>
+              <input
+                type="text"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                placeholder="Enter your address"
+                required
+              />
+            </div>
+
             <div className="form-group">
               <label htmlFor="bio">Bio:</label>
               <textarea
@@ -211,22 +273,35 @@ function SubmitFile() {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="jobDescription">Job Description:</label>
-              <textarea
-                name="jobDescription"
-                value={formData.jobDescription}
+              <label htmlFor="compName">Company Name:</label>
+              <input
+                type="text"
+                name="compName"
+                value={formData.compName}
                 onChange={handleChange}
-                placeholder="Enter the job description"
+                placeholder="Enter the company name"
                 required
               />
             </div>
             <div className="form-group">
-              <label htmlFor="requiredSkills">Required Skills:</label>
-              <textarea
-                name="requiredSkills"
-                value={formData.requiredSkills}
+              <label htmlFor="compEmail">Company Email:</label>
+              <input
+                type="email"
+                name="compEmail"
+                value={formData.compEmail}
                 onChange={handleChange}
-                placeholder="Enter the required skills"
+                placeholder="Enter the company email"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="compSkill">Skill you are looking for:</label>
+              <input
+                type="text"
+                name="compSkill"
+                value={formData.compSkill}
+                onChange={handleChange}
+                placeholder="Enter the skill you are looking for"
                 required
               />
             </div>

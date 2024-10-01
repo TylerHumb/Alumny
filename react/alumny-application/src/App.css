@@ -92,4 +92,62 @@
     text-decoration: none;
     margin: 0 10px;
   }
+
+/* General App container to maintain consistency across pages */
+/* Add padding to the top of the content to account for the fixed navbar */
+/* .app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 100px 20px;
+  background-color: #f6f5f7;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+} */
+
+  body {
+    background-color: #FFF; /* Background color for the app */
+    font-family: 'Montserrat', sans-serif; /* Consistent font across the project */
+    color: #583D72; /* Primary text color (purple) */
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    color: #583D72; /* Heading colors */
+    margin-bottom: 20px;
+  }
+  
+  .navbar {
+    position: sticky;
+    /* top: 0; */
+    z-index: 999;
+    background-color: #583D72;
+    padding: 10px 20px;
+    height: 80px; /* Make sure the navbar has a consistent height */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  button {
+    background-color: #FFA53D; /* Orange for buttons */
+    color: #FFF;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #e69535;
+  }
+  
+  a {
+    text-decoration: none;
+    color: #583D72; /* Link color */
+    font-weight: bold;
+    padding: 0 10px;
+  }
+  
+  a:hover {
+    color: #FFA53D;
+  }
   
