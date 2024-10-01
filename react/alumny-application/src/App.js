@@ -6,6 +6,8 @@ import Employee from './employee';
 import SignIn from './signin';
 import MainPage from './mainpage';
 import ProfilePage from './profilePage';
+import HomepageEmployer from './HomepageEmployer';
+import SubmitFile from './submitFile';
 
 function App() {
   const location = useLocation();
@@ -18,11 +20,13 @@ function App() {
       {/* Route Definitions, for every page we want to navigate to we need to declare a route definition, basically the path to the file, as well as import it at the top of this doc */}
       <Routes>
         <Route path="/" element={<LinkPage />} />
+        <Route path="/homepageEmployer" element={<HomepageEmployer />} />
         <Route path="/company" element={<Company />} />
         <Route path='/employee'element={<Employee/>}/>
         <Route path='/signin'element={<SignIn/>}/>
         <Route path='/mainPage'element={<MainPage/>}/>
         <Route path='/profilepage'element={<ProfilePage/>}/>
+        <Route path="/submit-file" element={<SubmitFile />} />
       </Routes>
     </div>
   );
