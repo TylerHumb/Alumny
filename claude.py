@@ -180,21 +180,12 @@ if __name__ == "__main__":
     for skill in foundSkills:
         print(f"- {skill}")
 
-    if choice == '1':  # If job description, add skills to Employer_Skills
-       for skill in foundSkills:
-         userController.addSkillToEmployer(conn, employer_id, skill)  # Add all skills to Employer_Skills
-         if skill.startswith("Implied:"):  # Add implied skills to Temp_Skills
-            implied_skill = skill.split(":")[1].strip().split(",")[0]
-            userController.addSkillToTemp(conn, implied_skill, employer_id=employer_id)
-
-    elif choice == '2':  # If employee resume, add skills to Employee_Skills
-       for skill in foundSkills:
-         userController.addSkillToEmployee(conn, employee_id, skill)  # Add all skills to Employee_Skills
-         if skill.startswith("Implied:"):  # Add implied skills to Temp_Skills
-            implied_skill = skill.split(":")[1].strip().split(",")[0]
-            userController.addSkillToTemp(conn, implied_skill, employee_id=employee_id)
-
-
+    # Insert skills into the appropriate tables
+    for skill in foundSkills:
+        if skill in skillsList:
+            userController.addSkillToEmployee(conn, employee_id, skill)  # Insert into Employee_Skills
+        else:
+            userController.addSkillToTemp(conn, employee_id, skill)  # Insert into Temp_Skills
 
     userController.closeConnection(conn)
 1
