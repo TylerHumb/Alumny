@@ -138,9 +138,9 @@ def addSkillToEmployer(conn, employer_id, skill, skill_id):
     try:
         cur = conn.cursor()
         cur.execute('''
-            INSERT INTO Employer_Skills (Employer_ID, Skill_Name, Skill_id)
+            INSERT INTO Employer_Skills (Skill_Name, Employer_ID, Skill_id)
             VALUES (?, ?, ?)
-        ''', (employer_id, skill, skill_id))
+        ''', (skill, employer_id, skill_id))
         conn.commit()
         print(f"Skill '{skill}' added to employer ID {employer_id} in Employer_Skills.")
     except sqlite3.Error as e:

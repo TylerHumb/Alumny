@@ -193,8 +193,6 @@ if __name__ == "__main__":
 
     categoryList = userController.getAllSkills(conn)
 
-    sampleText = userController.getPlainText(conn, employee_id)
-
     foundSkillsCategories = findSkillCategories(categoryList, sampleText)
     print("Skills categories found in the text:")
     for skill in foundSkillsCategories:
@@ -212,7 +210,7 @@ if __name__ == "__main__":
         for skill in foundSkills:
             if skill in skillsList:
                 skill_id = userController.getSkillId(conn, skill)
-                userController.addSkillToEmployer(conn, employee_id, skill, skill_id)  # Insert into Employer_Skills
+                userController.addSkillToEmployer(conn, employer_id, skill, skill_id)  # Insert into Employer_Skills
             else:
                 if ',' in skill:
                     skill, category = skill.split(',')
@@ -220,7 +218,7 @@ if __name__ == "__main__":
                     category = category.strip()
                     skill_id = userController.insertSkill(conn, skill, category)
                     userController.addSkillToTemp(conn, skill, category)  # Insert into Temp_Skills
-                    userController.addSkillToEmployer(conn, employee_id, skill, skill_id)  # Insert into Employer_Skills
+                    userController.addSkillToEmployer(conn, employer_id, skill, skill_id)  # Insert into Employer_Skills
 
     elif choice == '2':
         # Insert skills into the appropriate tables
