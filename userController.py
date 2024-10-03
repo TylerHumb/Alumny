@@ -101,17 +101,64 @@ def addSkillToEmployee(conn, employee_id, skill, skill_id):
     except sqlite3.Error as e:
         print(f"Error adding skill '{skill}' for employee ID {employee_id} in Employee_Skills: {e}")
 
-def addSkillToTemp(conn, employee_id, skill):
+def addSkillToTemp(conn, skill, category):
+    """
+    Insert the skill into the Temp_Skills table for the given employee.
+    """
+    try:
+        cur = conn.cursor()
+        cur.execute('''
+            INSERT INTO Temp_Skills (Skill_Name, Category)
+            VALUES (?, ?)
+        ''', (skill, category))
+        conn.commit()
+        print(f"Skill '{skill}' Category '{category}, in Temp_Skills.")
+    except sqlite3.Error as e:
+        print(f"Error adding skill '{skill}' Category '{category} in Temp_Skills: {e}")
+
+def getSkillId(conn, skill):
+    query = '''SELECT Skill_ID FROM Skills_List WHERE Skill_Name = ?'''
+    cur = conn.cursor()
+    cur.execute(query, (skill,))
+    result = cur.fetchone()
+    return result[0]
+
+def insertSkill(conn, skill_name, category):
+    query = '''INSERT INTO Skills_List (Skill_Name, Category) VALUES (?, ?)'''
+    cur = conn.cursor()
+    cur.execute(query, (skill_name, category))
+    conn.commit()
+    return cur.lastrowid
+
+
+def addSkillToEmployer(conn, employer_id, skill, skill_id):
     """
     Insert the skill into the Employer_Skills table for the given employer.
     """
     try:
         cur = conn.cursor()
         cur.execute('''
-            INSERT INTO Temp_Skills (Employee_ID, Skill_Name)
-            VALUES (?, ?)
-        ''', (employee_id, skill))
+            INSERT INTO Employer_Skills (Employer_ID, Skill_Name, Skill_id)
+            VALUES (?, ?, ?)
+        ''', (employer_id, skill, skill_id))
         conn.commit()
-        print(f"Skill '{skill}' added to employee ID {employee_id} in Temp_Skills.")
+        print(f"Skill '{skill}' added to employer ID {employer_id} in Employer_Skills.")
     except sqlite3.Error as e:
-        print(f"Error adding skill '{skill}' for employee ID {employee_id} in Temp_Skills: {e}")
+        print(f"Error adding skill '{skill}' for employer ID {employer_id} in Employer_Skills: {e}")
+
+def getJobDesc(conn, employer_id):
+    """
+    Retrieve the job description (Plaintext) for a given employer ID.
+    """
+    try:
+        query = '''SELECT Plaintext FROM Job_Listing WHERE Employer_ID = ?'''
+        cur = conn.cursor()
+        cur.execute(query, (employer_id,))
+        result = cur.fetchone()
+        if result:
+            return result[0]  # Return the job description text
+        else:
+            return None  # If no job description is found
+    except sqlite3.Error as e:
+        print(f"Error retrieving job description for employer ID {employer_id}: {e}")
+        return None
