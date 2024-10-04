@@ -51,21 +51,21 @@ function SignIn() {
           {/* Tab Content */}
           {activeTab === 'Student' && (
             <div id="Student" className="tabcontent">
-              <input className="signinInput" type="text" placeholder="Name" required />
+              {/* <input className="signinInput" type="text" placeholder="Name" required />
               <input className="signinInput" type="email" placeholder="Email" required />
-              <input className="signinInput" type="password" placeholder="Password" required />
+              <input className="signinInput" type="password" placeholder="Password" required /> */}
             </div>
           )}
 
           {activeTab === 'Employer' && (
             <div id="Employer" className="tabcontent">
-              <input className="signinInput" type="text" placeholder="Company Name" required />
+              {/* <input className="signinInput" type="text" placeholder="Company Name" required />
               <input className="signinInput" type="email" placeholder="Email" required />
-              <input className="signinInput" type="password" placeholder="Password" required />
+              <input className="signinInput" type="password" placeholder="Password" required /> */}
             </div>
           )}
 
-          <button className="signinButton">Sign Up</button>
+          {/* <button className="signinButton">Sign Up</button> */}
         </form>
       </div>
 
