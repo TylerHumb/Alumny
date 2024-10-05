@@ -24,9 +24,7 @@ def deleteSkillemp(id,skill):
 @app.route('/extractskillsemp/<int:id>')
 def extractSkillemp(id):
     try:
-        print("entered try")
         skillextractor = claude.SkillExtractor()
-        print('initialised skillextractor')
         skillextractor.extractEmployeeSkills(id)
         return jsonify({'message':"OK"}),200
     except:
@@ -36,6 +34,21 @@ def extractSkillemp(id):
 def deleteallemp(id):
     return testlogic.deleteAllEmployee(id)
 
+@app.route('/createemp/<string:name>')
+def createemployee(name):
+    return testlogic.createEmployee(name)
+
+@app.route('/resume/<int:id>/<string:resume>')
+def updateresume(id,resume):
+    return testlogic.setresume(id,resume)
+
+@app.route('/removeresume/<int:id>')
+def removeresume(id):
+    return testlogic.clearresume(id)
+
+@app.route('/deleteemp/<int:id>')
+def deleteemployee(id):
+    return testlogic.deleteEmployee(id)
 
 if __name__ == "__main__":
     app.run(debug=True)

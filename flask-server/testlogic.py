@@ -86,3 +86,43 @@ def deleteAllEmployee(employee_id):
     except sqlite3.Error:
         closeConnection(conn)
         return abort(404,description = 'Error occured during execution')
+    
+def createEmployee(name):
+    try:
+        conn = createConnection()
+        cur = conn.cursor()
+        cur.execute("INSERT INTO Employee(Name) VALUES(?)", (name,))
+        conn.commit()
+        return jsonify({'userid':cur.lastrowid})
+    except:
+        return abort(404,description = 'Error occured during execution')
+    
+def setresume(employee_id,resume):
+    try:
+        conn = createConnection()
+        cur = conn.cursor()
+        cur.execute("UPDATE Employee SET Plaintext = ? WHERE Employee_ID = ?;", (resume,employee_id))
+        conn.commit()
+        return jsonify({'message':"OK"}),200
+    except:
+        return abort(404,description = 'Error occured during execution')
+
+def clearresume(employee_id):
+    try:
+        conn = createConnection()
+        cur = conn.cursor()
+        cur.execute("UPDATE Employee SET Plaintext = Null WHERE Employee_ID = ?;", (employee_id,))
+        conn.commit()
+        return jsonify({'message':"OK"}),200
+    except:
+        return abort(404,description = 'Error occured during execution')
+    
+def deleteEmployee(employee_id):
+    try:
+        conn = createConnection()
+        cur = conn.cursor()
+        cur.execute("DELETE FROM Employee WHERE Employee_ID = ?;", (employee_id,))
+        conn.commit()
+        return jsonify({'message':"OK"}),200
+    except:
+        return abort(404,description = 'Error occured during execution')
