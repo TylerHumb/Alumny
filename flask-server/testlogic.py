@@ -1,8 +1,8 @@
 import sqlite3
 from sqlite3 import Error
 from flask import jsonify,abort
-
-def createConnection(db_file):
+db_file = 'Alumnyprod'
+def createConnection():
     conn = None
     try:
         conn = sqlite3.connect(db_file)
@@ -19,7 +19,7 @@ def closeConnection(conn):
 
 
 def loginEmployee(id):
-    conn = createConnection('Alumny.db')
+    conn = createConnection()
     conn.row_factory = sqlite3.Row  # Make cursor return rows as dictionaries
     cur = conn.cursor()
     cur.execute("SELECT * FROM Employee WHERE Employee_ID = ?",(id,))
@@ -34,7 +34,7 @@ def loginEmployee(id):
         })
 
 def getSkillsEmployee(id):
-    conn = createConnection('Alumny.db')
+    conn = createConnection()
     conn.row_factory = sqlite3.Row  # Make cursor return rows as dictionaries
     cur = conn.cursor()
     cur.execute("SELECT * FROM Employee_skills WHERE Employee_ID = ?",(id,))
@@ -52,7 +52,7 @@ def getSkillsEmployee(id):
     return skilllist
 
 def addSkillToEmployee(employee_id, skill):
-    conn = createConnection('Alumny.db')
+    conn = createConnection()
     try:
         cur = conn.cursor()
         cur.execute('''INSERT INTO Employee_Skills (Employee_ID, Skill_Name)VALUES (?, ?)''', (employee_id, skill))
@@ -64,7 +64,7 @@ def addSkillToEmployee(employee_id, skill):
         return abort(404,description = 'Error occured during execution')
     
 def deleteSkillEmployee(employee_id,skill):
-    conn = createConnection('Alumny.db')
+    conn = createConnection()
     try:
         cur = conn.cursor()
         cur.execute("DELETE FROM Employee_Skills WHERE Skill_Name = ? AND Employee_ID = ?",(skill,employee_id))
