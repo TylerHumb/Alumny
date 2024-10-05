@@ -6,6 +6,7 @@ import Employee from './employee';
 import SignIn from './signin';
 import MainPage from './mainpage';
 import ProfilePage from './profilePage';
+import Test from './test'
 
 function App() {
   const location = useLocation();
@@ -23,6 +24,7 @@ function App() {
         <Route path='/signin'element={<SignIn/>}/>
         <Route path='/mainPage'element={<MainPage/>}/>
         <Route path='/profilepage'element={<ProfilePage/>}/>
+        <Route path='/test'element={<Test/>}/>
       </Routes>
     </div>
   );
