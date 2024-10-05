@@ -5,7 +5,7 @@ import userController
 import sqlite3
 
 class SkillExtractor:
-    def __init__(self, db_path='Alumny.db'):
+    def __init__(self, db_path='Alumnyprod.db'):
         # Load environment and create anthropic client and database connection
         load_dotenv()
         self.api_key = os.getenv('api_key_anthropic')
