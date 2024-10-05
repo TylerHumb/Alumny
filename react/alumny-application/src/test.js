@@ -32,6 +32,7 @@ function Test() {
         }
     };
     const loadskills = async () =>{
+        setError(null); // set error to null
         try{
             //once user is set, retrieve their skills
             const skillslist = await fetch(`/skillsemp/${userId}`);
@@ -46,6 +47,7 @@ function Test() {
         }
     }
     const addSkill = async (e) => {
+        setError(null); // set error to null
         try {
             e.preventDefault(); //prevent empty skill being added
             const response = await fetch(`/addskillemp/${userId}/${skilltoadd}`)
@@ -60,15 +62,44 @@ function Test() {
         }
     }
     const deleteskill = async (e) => {
+        setError(null); // set error to null
         try {
             e.preventDefault(); //prevent empty skill being added
-            const response = await fetch(`/deleteSkillemp/${userId}/${skilltodel}`)
+            const response = await fetch(`/deleteskillemp/${userId}/${skilltodel}`)
             if(!response.ok){
                 throw new Error("Skill failed to delete")
             }
             //reload skills if new skill was successfully deleted
             loadskills()
         } catch (err) {
+            setError(err.message);
+            console.log(err);
+        }
+    }
+    const extractskills = async () => {
+        setError(null); // set error to null
+        try{
+            const response = await fetch(`/extractskillsemp/${userId}`)
+            if (!response.ok){
+                throw new Error("Skill extraction failed")
+            }
+            //reload skills if skills were successfully extracted
+            loadskills()
+        }catch(err){
+            setError(err.message);
+            console.log(err);
+        }
+    }
+    const deleteskills = async () => {
+        setError(null); // set error to null
+        try{
+            const response = await fetch(`/deleteallemp/${userId}`)
+            if (!response.ok){
+                throw new Error("error during skill deletion")
+            }
+            //reload skills if skills were successfully deleted
+            loadskills()
+        }catch(err){
             setError(err.message);
             console.log(err);
         }
@@ -89,14 +120,17 @@ function Test() {
     
             <br />
             
-            {error && <p>{error}</p>} {/* Display error message if any */}
+            {error && <p style={{color: 'red' }}>{error}</p>} {/* Display error message if any */}
             
             {user && ( // Display more information if the user is signed in
             <div>
                     <p>Resume:<br />{user.resume || 'No resume available'}</p>
                     <br />
                     {skills === null || skills.length === 0 ? (
-                        <p>No skills present</p>
+                        <div>
+                            <p>No skills present</p>
+                            <button onClick={extractskills}>extract skills from resume?</button>
+                        </div>
                     ) : (
                         <ul>
                             {skills.map(skill => (
@@ -114,6 +148,7 @@ function Test() {
                     <input type='text' value={skilltodel} onChange={(e) => setSkillToDel(e.target.value)} />
                     <button type='submit'>delete skill</button>
                 </form>
+                <button onClick={deleteskills}>Delete all skills from profile?</button>
             </div>
             )}
         </div>
