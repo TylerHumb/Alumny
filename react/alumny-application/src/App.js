@@ -12,6 +12,7 @@ import StudentDashboard from './StudentDashboard';
 import EmployerDashboard from './EmployerDashboard';
 import { UserProvider } from './UserContext';  // Import UserProvider
 import './App.css';  // New CSS file for consistent styling
+import Test from './test'
 
 function App() {
   const location = useLocation();
@@ -31,8 +32,8 @@ function App() {
         <Route path="/mainPage" element={<MainPage />} />
         <Route path="/profilepage" element={<ProfilePage />} />
         <Route path="/submit-file" element={<SubmitFile />} />
+        <Route path='/test'element={<Test/>}/>
       </Routes>
-
     </UserProvider>
     </div>
   );
