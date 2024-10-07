@@ -1,20 +1,35 @@
-import React from 'react';
-import './mainPage.css'; 
-//import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-//import { faFacebookF, faGooglePlusG, faLinkedinIn } from '@fortawesome/free-brands-svg-icons';
+import React, { useEffect } from 'react';
+import './mainPage.css';
+import { useNavigate } from 'react-router-dom';
+import { useUser } from './UserContext';  // Import the context
+import Navbar from './Navbar';
 
-const MainPage = () => {
+function MainPage() {
+  const { userType } = useUser();  // Get the userType from the context
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Redirect based on user type
+    if (userType === 'student') {
+      navigate('/student-dashboard'); // Route to Student page
+    } else if (userType === 'employer') {
+      navigate('/employer-dashboard'); // Route to Employer page
+    }
+  }, [userType, navigate]);
+
+  const handleStartMatchingClick = () => {
+    navigate('/submit-file');  // Navigate to the SubmitFile page
+  };
+
   return (
+    <>
+    <Navbar />
     <div className='mainpageContainer'>
-      <header className="mainpageHeader">
-        <img src="images\Placeholder.png" alt="Logo" className="logo" />
-        <p>Welcome to Alumly</p>
-      </header>
 
       <div className="main-container">
         <div className="match-banner">
           <h1>Match with suitable candidates!</h1>
-          <button className="start-matching">Start matching</button>
+          <button className="start-matching" onClick={handleStartMatchingClick}>Start Matching</button>
         </div>
 
         <div className="student-recommendations">
@@ -23,19 +38,16 @@ const MainPage = () => {
             <div className="recommendation-card">
               <img src="placeholder.png" alt="Student Image" className="recommendation-image" />
               <p>Text 1</p>
-              <p>$0</p>
               <p>Body text</p>
             </div>
             <div className="recommendation-card">
               <img src="placeholder.png" alt="Student Image" className="recommendation-image" />
               <p>Text 2</p>
-              <p>$0</p>
               <p>Body text</p>
             </div>
             <div className="recommendation-card">
               <img src="placeholder.png" alt="Student Image" className="recommendation-image" />
               <p>Text 3</p>
-              <p>$0</p>
               <p>Body text</p>
             </div>
           </div>
@@ -70,7 +82,8 @@ const MainPage = () => {
         </div>
       </footer>
     </div>
+    </>
   );
-};
+}
 
 export default MainPage;
