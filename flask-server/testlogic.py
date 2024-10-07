@@ -1,7 +1,7 @@
 import sqlite3
 from sqlite3 import Error
 from flask import jsonify,abort
-db_file = 'Alumnyprod'
+db_file = 'Alumnyprod.db'
 def createConnection():
     conn = None
     try:
@@ -41,7 +41,7 @@ def getSkillsEmployee(id):
     skills = cur.fetchall()
     closeConnection(conn)
     if len(skills) == 0:
-        return abort(404,description = 'No skills found')
+        return [] #early termination if no skills
     skilllist = []
     for skill in skills:
         skilldata = {
@@ -67,10 +67,62 @@ def deleteSkillEmployee(employee_id,skill):
     conn = createConnection()
     try:
         cur = conn.cursor()
-        cur.execute("DELETE FROM Employee_Skills WHERE Skill_Name = ? AND Employee_ID = ?",(skill,employee_id))
+        cur.execute("DELETE FROM Employee_Skills WHERE LOWER(Skill_Name) = LOWER(?) AND Employee_ID = ?", (skill, employee_id))
         conn.commit()
         closeConnection(conn)
         return jsonify({'message':"OK"}),200
     except sqlite3.Error as e:
         closeConnection(conn)
+        return abort(404,description = 'Error occured during execution')
+
+def deleteAllEmployee(employee_id):
+    conn = createConnection()
+    try:
+        cur = conn.cursor()
+        cur.execute("DELETE FROM Employee_Skills WHERE Employee_ID = ?", (employee_id,))
+        conn.commit()
+        closeConnection(conn)
+        return jsonify({'message':"OK"}),200
+    except sqlite3.Error:
+        closeConnection(conn)
+        return abort(404,description = 'Error occured during execution')
+    
+def createEmployee(name):
+    try:
+        conn = createConnection()
+        cur = conn.cursor()
+        cur.execute("INSERT INTO Employee(Name) VALUES(?)", (name,))
+        conn.commit()
+        return jsonify({'userid':cur.lastrowid})
+    except:
+        return abort(404,description = 'Error occured during execution')
+    
+def setresume(employee_id,resume):
+    try:
+        conn = createConnection()
+        cur = conn.cursor()
+        cur.execute("UPDATE Employee SET Plaintext = ? WHERE Employee_ID = ?;", (resume,employee_id))
+        conn.commit()
+        return jsonify({'message':"OK"}),200
+    except:
+        return abort(404,description = 'Error occured during execution')
+
+def clearresume(employee_id):
+    try:
+        conn = createConnection()
+        cur = conn.cursor()
+        cur.execute("UPDATE Employee SET Plaintext = Null WHERE Employee_ID = ?;", (employee_id,))
+        conn.commit()
+        return jsonify({'message':"OK"}),200
+    except:
+        return abort(404,description = 'Error occured during execution')
+    
+def deleteEmployee(employee_id):
+    try:
+        conn = createConnection()
+        cur = conn.cursor()
+        cur.execute("DELETE FROM Employee WHERE Employee_ID = ?;", (employee_id,))
+        conn.commit()
+        return jsonify({'message':"OK"}),200
+    except:
         return abort(404,description = 'Error occured during execution')
