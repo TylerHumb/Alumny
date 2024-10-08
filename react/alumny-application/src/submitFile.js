@@ -83,20 +83,22 @@ function SubmitFile() {
         method: 'POST'
       });
 
+      if (!response.ok) {
+        throw new Error('Error creating employee');
+      }
+
       const result = await response.json();
 
-      if (response.ok) {
-        console.log('Success:', result);
-        alert(`Employee created successfully with ID: ${result.employee_id}`);
+      console.log('Success:', result);
+      alert(`Employee created successfully with ID: ${result.userid}`);
 
-        // After creating the employee, update the resume
-        const resumeContent = formData.resume;
-        if (resumeContent) {
-          await updateResume(result.employee_id, resumeContent);  // Call the function to update resume
-        }
-      } else {
-        alert('Error creating employee');
-        console.error(result);
+      // After creating the employee, update the resume
+      const resumeContent = formData.resume;
+      if (resumeContent) {
+        await updateResume(result.userid, resumeContent);  // Call the function to update resume
+
+        // Once the resume is updated, extract skills from the resume
+        await extractSkills(result.userid);  // Extract skills after updating resume
       }
     } catch (error) {
       console.error('Error creating employee:', error);
@@ -118,9 +120,6 @@ function SubmitFile() {
       if (response.ok) {
         const result = await response.json();
         console.log('Resume updated successfully:', result);
-
-        // Optionally, after successful resume update, navigate to another page
-        navigate(`/skills/${employeeId}`);
       } else {
         console.error('Error updating resume');
         alert('Failed to update resume.');
@@ -128,6 +127,29 @@ function SubmitFile() {
     } catch (error) {
       console.error('Error submitting the resume:', error);
       alert('An error occurred during resume submission.');
+    }
+  };
+
+  // Function to extract skills from the resume for the employee
+  const extractSkills = async (employeeId) => {
+    try {
+      const response = await fetch(`/extractskillsemp/${employeeId}`, {
+        method: 'GET'
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Skills extracted successfully:', result);
+
+        // After successful skill extraction, navigate to the skills page
+        navigate(`/skillsemp/${employeeId}`);
+      } else {
+        console.error('Error extracting skills');
+        alert('Failed to extract skills.');
+      }
+    } catch (error) {
+      console.error('Error extracting skills:', error);
+      alert('An error occurred during skill extraction.');
     }
   };
 

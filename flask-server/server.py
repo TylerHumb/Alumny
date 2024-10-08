@@ -37,12 +37,12 @@ def extractSkillemp(id):
 def deleteallemp(id):
     return testlogic.deleteAllEmployee(id)
 
-@app.route('/createemp/<string:name>')
+@app.route('/createemp/<string:name>', methods=['POST'])
 def createemployee(name):
     return testlogic.createEmployee(name)
 
 
-@app.route('/resume/<int:id>/<string:resume>')
+@app.route('/resume/<int:id>/<string:resume>', methods=['POST'])
 def updateresume(id,resume):
     return testlogic.setresume(id,resume)
 

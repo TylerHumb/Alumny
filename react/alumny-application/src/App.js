@@ -8,8 +8,6 @@ import MainPage from './mainpage';
 import ProfilePage from './profilePage';
 import HomepageEmployer from './HomepageEmployer';
 import SubmitFile from './submitFile';
-import StudentDashboard from './StudentDashboard';
-import EmployerDashboard from './EmployerDashboard';
 import { UserProvider } from './UserContext';  // Import UserProvider
 import './App.css';  // New CSS file for consistent styling
 import Test from './test'
