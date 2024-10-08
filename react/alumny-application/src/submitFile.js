@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import './submitFile.css';
 import Navbar from './Navbar.js';
-import { getDocument } from 'pdfjs-dist';  // Import PDF.js
+import { useNavigate } from 'react-router-dom';  // For navigation after submission
 
-// Simulated skills from a database (you can replace this with an actual API call)
 const skills = ['Communication', 'Time Management', 'Leadership', 'Problem Solving', 'Critical Thinking'];
 
 function SubmitFile() {
-  const [activeTab, setActiveTab] = useState('Student'); // Tab switcher
-  const [selectedSkills, setSelectedSkills] = useState([]); // To manage selected skills
+  const [activeTab, setActiveTab] = useState('Student');
+  const [selectedSkills, setSelectedSkills] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
     dob: '',
@@ -27,6 +26,8 @@ function SubmitFile() {
     employerResume: null
   });
 
+  const navigate = useNavigate();  // For navigation after submission
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -35,42 +36,19 @@ function SubmitFile() {
     });
   };
 
-  // Handle file selection
+  // Handle file selection for text files (resume)
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
-    const { name, type } = file;
 
-    if (type === 'application/pdf') {
-      // Convert PDF to text
-      const text = await convertPdfToText(file);
-      setFormData({ ...formData, [name]: text });
-    } else if (type === 'text/plain' || type === 'application/csv') {
+    if (file && file.type === 'text/plain') {
       const reader = new FileReader();
       reader.onload = () => {
-        setFormData({ ...formData, [name]: reader.result });
+        setFormData({ ...formData, resume: reader.result });
       };
       reader.readAsText(file);
     } else {
-      alert('Only .txt, .pdf, and .csv files are allowed.');
+      alert('Only .txt files are allowed.');
     }
-  };
-
-  // Convert PDF to text
-  const convertPdfToText = async (file) => {
-    const arrayBuffer = await file.arrayBuffer();
-    const pdfDoc = await getDocument(arrayBuffer).promise;
-    let text = '';
-    const numPages = pdfDoc.numPages;
-
-    for (let pageNum = 1; pageNum <= numPages; pageNum++) {
-      const page = await pdfDoc.getPage(pageNum);
-      const pageText = await page.getTextContent();
-      pageText.items.forEach((item) => {
-        text += item.str + ' ';
-      });
-    }
-
-    return text;
   };
 
   // Handle skill selection as tags
@@ -88,40 +66,74 @@ function SubmitFile() {
     setFormData({ ...formData, frustrations: newSkills });
   };
 
-  // Submit the data to the backend
+  // Submit the employee name and create the employee
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const dataToSubmit = new FormData(); // FormData for file handling
-    Object.keys(formData).forEach((key) => {
-      if (formData[key]) {
-        dataToSubmit.append(key, formData[key]);
-      }
-    });
+    const employeeName = formData.name;  // 'name' is the employee name
+
+    if (!employeeName) {
+      alert("Please provide a name.");
+      return;
+    }
 
     try {
-      const response = await fetch('/api/submit-profile', {
+      // Send a POST request to the backend with employee name in the URL
+      const response = await fetch(`/createemp/${encodeURIComponent(employeeName)}`, {
+        method: 'POST'
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        console.log('Success:', result);
+        alert(`Employee created successfully with ID: ${result.employee_id}`);
+
+        // After creating the employee, update the resume
+        const resumeContent = formData.resume;
+        if (resumeContent) {
+          await updateResume(result.employee_id, resumeContent);  // Call the function to update resume
+        }
+      } else {
+        alert('Error creating employee');
+        console.error(result);
+      }
+    } catch (error) {
+      console.error('Error creating employee:', error);
+      alert('An error occurred during submission.');
+    }
+  };
+
+
+  // Function to update the resume of the newly created employee
+  const updateResume = async (employeeId, resumeContent) => {
+    try {
+      const response = await fetch(`/resume/${employeeId}/${encodeURIComponent(resumeContent)}`, {
         method: 'POST',
-        body: dataToSubmit
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
 
       if (response.ok) {
         const result = await response.json();
-        console.log('Success:', result);
-        alert('Form submitted successfully');
+        console.log('Resume updated successfully:', result);
+
+        // Optionally, after successful resume update, navigate to another page
+        navigate(`/skills/${employeeId}`);
       } else {
-        console.error('Error:', response.statusText);
-        alert('Form submission failed');
+        console.error('Error updating resume');
+        alert('Failed to update resume.');
       }
     } catch (error) {
-      console.error('Error submitting the form:', error);
-      alert('An error occurred during form submission');
+      console.error('Error submitting the resume:', error);
+      alert('An error occurred during resume submission.');
     }
   };
 
   return (
     <div className="submit-file-container">
-        < Navbar />
+      <Navbar />
       <h1>Submit Your Information</h1>
       <div className="tab-container">
         <button
@@ -248,11 +260,11 @@ function SubmitFile() {
 
             {/* Resume Upload */}
             <div className="form-group">
-              <label htmlFor="resume">Upload Resume (.txt or .pdf):</label>
+              <label htmlFor="resume">Upload Resume (.txt):</label>
               <input
                 type="file"
                 name="resume"
-                accept=".txt,.pdf"
+                accept=".txt"
                 onChange={handleFileChange}
                 required
               />
@@ -308,11 +320,11 @@ function SubmitFile() {
 
             {/* Employer Resume Upload */}
             <div className="form-group">
-              <label htmlFor="employerResume">Upload Job Description Document (.txt or .pdf):</label>
+              <label htmlFor="employerResume">Upload Job Description Document (.txt):</label>
               <input
                 type="file"
                 name="employerResume"
-                accept=".txt,.pdf"
+                accept=".txt"
                 onChange={handleFileChange}
                 required
               />

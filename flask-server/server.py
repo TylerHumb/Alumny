@@ -4,6 +4,9 @@ import claude
 from flask import jsonify,abort
 app = Flask(__name__)
 
+@app.route('/')
+def index():
+    return "Welcome to the API! The routes are correctly working."
 
 @app.route("/loginemp/<int:id>")
 def loginemp(id):
@@ -37,6 +40,7 @@ def deleteallemp(id):
 @app.route('/createemp/<string:name>')
 def createemployee(name):
     return testlogic.createEmployee(name)
+
 
 @app.route('/resume/<int:id>/<string:resume>')
 def updateresume(id,resume):
