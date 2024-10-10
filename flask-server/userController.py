@@ -162,3 +162,70 @@ def getJobDesc(conn, employer_id):
     except sqlite3.Error as e:
         print(f"Error retrieving job description for employer ID {employer_id}: {e}")
         return None
+
+def checkSkillExistsForEmployer(conn, employer_id, skill_id):
+    query = """
+    SELECT 1 FROM Employer_Skills 
+    WHERE employer_id = ? AND skill_id = ?
+    """
+    cur = conn.cursor()
+    cur.execute(query, (employer_id, skill_id))
+    return cur.fetchone() is not None
+
+def checkSkillExistsForEmployee(conn, employee_id, skill_id):
+    query = """
+    SELECT 1 FROM Employee_Skills 
+    WHERE employee_id = ? AND skill_id = ?
+    """
+    cur = conn.cursor()
+    cur.execute(query, (employee_id, skill_id))
+    return cur.fetchone() is not None
+
+
+#### MAtching
+def match_employee_to_employer(conn, employee_id, min_matches=5):
+    """
+    Find employers that match at least `min_matches` number of skills with the given employee.
+    - conn: The database connection.
+    - employee_id: The employee ID to search for.
+    - min_matches: The minimum number of skill matches required for an employer to be considered a match.
+    """
+    
+    try:
+        # Retrieve employee's skills
+        cur = conn.cursor()
+        cur.execute('SELECT Skill_Name FROM Employee_Skills WHERE Employee_ID = ?', (employee_id,))
+        employee_skills = [row[0] for row in cur.fetchall()]
+
+
+        if not employee_skills:
+            print(f"No skills found for employee ID {employee_id}.")
+            return []
+       
+        # Retrieve all employers' skills and match them
+        cur.execute('SELECT DISTINCT Employer_ID FROM Employer_Skills')
+        employers = [row[0] for row in cur.fetchall()]
+
+
+        matched_employers = []
+       
+        for employer_id in employers:
+            # Retrieve the employer's skills
+            cur.execute('SELECT Skill_Name FROM Employer_Skills WHERE Employer_ID = ?', (employer_id,))
+            employer_skills = [row[0] for row in cur.fetchall()]
+
+
+            # Count the number of matching skills
+            matching_skills = set(employee_skills).intersection(set(employer_skills))
+
+
+            # If the match count is greater than or equal to `min_matches`, store the result
+            if len(matching_skills) >= min_matches:
+                matched_employers.append((employer_id, len(matching_skills), matching_skills))
+       
+        return matched_employers
+
+
+    except sqlite3.Error as e:
+        print(f"Error matching skills: {e}")
+        return []
