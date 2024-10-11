@@ -5,7 +5,7 @@ import userController
 import sqlite3
 
 class SkillExtractor:
-    def __init__(self, db_path='Alumnyprod.db'):
+    def __init__(self, db_path='Alumny.db'):
         # Load environment and create anthropic client and database connection
         load_dotenv()
         self.api_key = os.getenv('api_key_anthropic')
@@ -195,17 +195,25 @@ class SkillExtractor:
 
         # Insert skills into the appropriate tables
         for skill in foundSkills:
-            if skill in skillsList:
-                skill_id = userController.getSkillId(self.conn, skill)
-                userController.addSkillToEmployee(self.conn, employee_id, skill, skill_id)  # Insert into Employee_Skills
-            else:
-                if ',' in skill:
-                    skill, category = skill.split(',', 1)
-                    skill = skill.strip()
-                    category = category.strip()
-                    skill_id = userController.insertSkill(self.conn, skill, category)
-                    userController.addSkillToTemp(self.conn, skill, category)  # Insert into Temp_Skills
-                    userController.addSkillToEmployee(self.conn, employee_id, skill, skill_id)  # Insert into Employee_Skills
+         if skill in skillsList:
+            skill_id = userController.getSkillId(self.conn, skill)
+            
+            # Check if the skill already exists for the employee
+            if not userController.checkSkillExistsForEmployee(self.conn, employee_id, skill_id):
+                # Insert the skill if it does not already exist
+                userController.addSkillToEmployee(self.conn, employee_id, skill, skill_id)
+         else:
+            if ',' in skill:
+                skill, category = skill.split(',')
+                skill = skill.strip()
+                category = category.strip()
+                skill_id = userController.insertSkill(self.conn, skill, category)
+                
+                # Check if the skill already exists for the employee
+                if not userController.checkSkillExistsForEmployee(self.conn, employee_id, skill_id):
+                    # Insert into Temp_Skills and add to Employee_Skills
+                    userController.addSkillToTemp(self.conn, skill, category)
+                    userController.addSkillToEmployee(self.conn, employee_id, skill, skill_id)
     
     def extractEmployerSkills(self, employer_id):
         sampleText = userController.getJobDesc(self.conn, employer_id)
@@ -223,18 +231,25 @@ class SkillExtractor:
 
         # Insert skills into the appropriate tables
         for skill in foundSkills:
-            if skill in skillsList:
-                skill_id = userController.getSkillId(self.conn, skill)
-                userController.addSkillToEmployer(self.conn, employer_id, skill, skill_id)  # Insert into Employer_Skills
-            else:
-                if ',' in skill:
-                    skill, category = skill.split(',')
-                    skill = skill.strip()
-                    category = category.strip()
-                    skill_id = userController.insertSkill(self.conn, skill, category)
-                    userController.addSkillToTemp(self.conn, skill, category)  # Insert into Temp_Skills
-                    userController.addSkillToEmployer(self.conn, employer_id, skill, skill_id)  # Insert into Employer_Skills
-
+         if skill in skillsList:
+            skill_id = userController.getSkillId(self.conn, skill)
+            
+            # Check if the skill already exists for the employer
+            if not userController.checkSkillExistsForEmployer(self.conn, employer_id, skill_id):
+                # Insert the new skill if it does not already exist
+                userController.addSkillToEmployer(self.conn, employer_id, skill, skill_id)
+         else:
+            if ',' in skill:
+                skill, category = skill.split(',')
+                skill = skill.strip()
+                category = category.strip()
+                skill_id = userController.insertSkill(self.conn, skill, category)
+                
+                # Check if the skill already exists for the employer
+                if not userController.checkSkillExistsForEmployer(self.conn, employer_id, skill_id):
+                    # Insert into Temp_Skills and add to Employer_Skills
+                    userController.addSkillToTemp(self.conn, skill, category)
+                    userController.addSkillToEmployer(self.conn, employer_id, skill, skill_id)
     def close(self):
         userController.closeConnection(self.conn)
 
