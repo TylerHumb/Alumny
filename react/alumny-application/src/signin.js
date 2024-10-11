@@ -1,23 +1,27 @@
 import React, { useState } from 'react';
 import './signIn.css';
+import { useNavigate } from 'react-router-dom';  // Import useNavigate for navigation
 
 function SignIn() {
-  // Manage active view between Sign In and Sign Up
   const [isSignUp, setIsSignUp] = useState(false);
-
-  // Manage active tab (Student or Employer) in the Sign Up form
   const [activeTab, setActiveTab] = useState('Student');
+  const navigate = useNavigate(); // Initialize the navigate hook
 
   const handleSignUpClick = () => {
-    setIsSignUp(true);  // Show Sign Up form
+    setIsSignUp(true);
   };
 
   const handleSignInClick = () => {
-    setIsSignUp(false);  // Show Sign In form
+    setIsSignUp(false);
   };
 
   const handleTabChange = (tabName) => {
-    setActiveTab(tabName);  // Change the active tab (Student or Employer)
+    setActiveTab(tabName);
+  };
+
+  // Function to handle redirection to SubmitFile page with the correct tab (Student/Employer)
+  const redirectToSubmitFile = (tab) => {
+    navigate(`/submit-file?tab=${tab}`);  // Redirect to SubmitFile component with the active tab
   };
 
   return (
@@ -25,62 +29,34 @@ function SignIn() {
       <div className={`form-container sign-up-container ${isSignUp ? 'active' : ''}`}>
         <form className="signinForm" action="#">
           <h1 className="signinH1">Create Account</h1>
-          <div className="social-container">
-            <a href="#"><i className="fab fa-facebook-f"></i></a>
-            <a href="#"><i className="fab fa-google-plus-g"></i></a>
-            <a href="#"><i className="fab fa-linkedin-in"></i></a>
-          </div>
-          <span className="signinSpan">or use your email for registration</span>
+          {/* <span className="signinSpan">or use your email for registration</span> */}
 
           {/* Tab Links */}
           <div className="tab-container">
             <button
+              type="button"
               className={`tab-button ${activeTab === 'Student' ? 'active' : ''}`}
-              onClick={() => handleTabChange('Student')}
+              onClick={() => redirectToSubmitFile('Student')}  // Redirect to Student tab in SubmitFile
             >
               Student
             </button>
             <button
+              type="button"
               className={`tab-button ${activeTab === 'Employer' ? 'active' : ''}`}
-              onClick={() => handleTabChange('Employer')}
+              onClick={() => redirectToSubmitFile('Employer')}  // Redirect to Employer tab in SubmitFile
             >
               Employer
             </button>
           </div>
-
-          {/* Tab Content */}
-          {activeTab === 'Student' && (
-            <div id="Student" className="tabcontent">
-              {/* <input className="signinInput" type="text" placeholder="Name" required />
-              <input className="signinInput" type="email" placeholder="Email" required />
-              <input className="signinInput" type="password" placeholder="Password" required /> */}
-            </div>
-          )}
-
-          {activeTab === 'Employer' && (
-            <div id="Employer" className="tabcontent">
-              {/* <input className="signinInput" type="text" placeholder="Company Name" required />
-              <input className="signinInput" type="email" placeholder="Email" required />
-              <input className="signinInput" type="password" placeholder="Password" required /> */}
-            </div>
-          )}
-
-          {/* <button className="signinButton">Sign Up</button> */}
         </form>
       </div>
 
       <div className={`form-container sign-in-container ${isSignUp ? '' : 'active'}`}>
         <form className="signinForm" action="#" method="POST">
           <h1 className="signinH1">Sign in</h1>
-          <div className="social-container">
-            <a href="#" className="social"></a>
-            <a href="#" className="social"></a>
-            <a href="#" className="social"></a>
-          </div>
-          <span className="signinSpan">or use your account</span>
           <input className="signinInput" type="email" placeholder="Email" required />
           <input className="signinInput" type="password" placeholder="Password" required />
-          <a href="#" className="signinA">Forgot your password?</a>
+          {/* <a href="#" className="signinA">Forgot your password?</a> */}
           <button className="signinButton">Sign In</button>
         </form>
       </div>

@@ -31,6 +31,7 @@ function App() {
         <Route path="/profilepage" element={<ProfilePage />} />
         <Route path="/submit-file" element={<SubmitFile />} />
         <Route path='/test'element={<Test/>}/>
+        <Route path="/profile/:userId" element={<ProfilePage />} />
       </Routes>
     </UserProvider>
     </div>

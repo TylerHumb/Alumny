@@ -1,29 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './submitFile.css';
 import Navbar from './Navbar.js';
-import { useNavigate } from 'react-router-dom';  // For navigation after submission
+import { useNavigate, useLocation } from 'react-router-dom';  // Import useLocation to get query parameters
 
-const skills = ['Communication', 'Time Management', 'Leadership', 'Problem Solving', 'Critical Thinking'];
+// const skills = ['Communication', 'Time Management', 'Leadership', 'Problem Solving', 'Critical Thinking'];
 
 function SubmitFile() {
-  const [activeTab, setActiveTab] = useState('Student');
-  const [selectedSkills, setSelectedSkills] = useState([]);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const initialTab = queryParams.get('tab') || 'Student';  // Get 'tab' from query params, default to 'Student'
+
+  const [activeTab, setActiveTab] = useState(initialTab);  // Initialize active tab from URL param
+  // const [selectedSkills, setSelectedSkills] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
-    dob: '',
-    address: '',
-    bio: '',
-    personality: '',
-    motivations: '',
-    goals: '',
-    frustrations: [],
-    favoriteBrands: '',
     resume: null,
-    compName: '',
-    compEmail: '',
-    compSkill: '',
-    jobTitle: '',
-    employerResume: null
   });
 
   const navigate = useNavigate();  // For navigation after submission
@@ -49,21 +40,6 @@ function SubmitFile() {
     } else {
       alert('Only .txt files are allowed.');
     }
-  };
-
-  // Handle skill selection as tags
-  const handleSkillSelect = (skill) => {
-    if (!selectedSkills.includes(skill)) {
-      setSelectedSkills([...selectedSkills, skill]);
-      setFormData({ ...formData, frustrations: [...selectedSkills, skill] });
-    }
-  };
-
-  // Remove skill from selection
-  const handleSkillRemove = (skill) => {
-    const newSkills = selectedSkills.filter((selectedSkill) => selectedSkill !== skill);
-    setSelectedSkills(newSkills);
-    setFormData({ ...formData, frustrations: newSkills });
   };
 
   // Submit the employee name and create the employee
@@ -106,7 +82,6 @@ function SubmitFile() {
     }
   };
 
-
   // Function to update the resume of the newly created employee
   const updateResume = async (employeeId, resumeContent) => {
     try {
@@ -142,7 +117,7 @@ function SubmitFile() {
         console.log('Skills extracted successfully:', result);
 
         // After successful skill extraction, navigate to the skills page
-        navigate(`/skillsemp/${employeeId}`);
+        navigate(`/profile/${employeeId}`);
       } else {
         console.error('Error extracting skills');
         alert('Failed to extract skills.');
@@ -187,98 +162,6 @@ function SubmitFile() {
                 required
               />
             </div>
-            <div className="form-group">
-              <label htmlFor="dob">Date of Birth:</label>
-              <input
-                type="date"
-                name="dob"
-                value={formData.dob}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="address">Address:</label>
-              <input
-                type="text"
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                placeholder="Enter your address"
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="bio">Bio:</label>
-              <textarea
-                name="bio"
-                value={formData.bio}
-                onChange={handleChange}
-                placeholder="Write your bio here"
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="personality">Personality:</label>
-              <textarea
-                name="personality"
-                value={formData.personality}
-                onChange={handleChange}
-                placeholder="Describe your personality"
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="motivations">Motivations:</label>
-              <textarea
-                name="motivations"
-                value={formData.motivations}
-                onChange={handleChange}
-                placeholder="What motivates you?"
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="goals">Goals:</label>
-              <textarea
-                name="goals"
-                value={formData.goals}
-                onChange={handleChange}
-                placeholder="Your career goals"
-                required
-              />
-            </div>
-
-            {/* Skills (What Frustrates You) */}
-            <div className="form-group">
-              <label htmlFor="frustrations">What Frustrates You:</label>
-              <div className="skills-container">
-                {skills.map((skill) => (
-                  <button
-                    key={skill}
-                    type="button"
-                    className="skill-tag"
-                    onClick={() => handleSkillSelect(skill)}
-                  >
-                    {skill}
-                  </button>
-                ))}
-              </div>
-              <div className="selected-skills">
-                {selectedSkills.map((skill) => (
-                  <span key={skill} className="selected-skill">
-                    {skill}
-                    <button
-                      type="button"
-                      onClick={() => handleSkillRemove(skill)}
-                    >
-                      &times;
-                    </button>
-                  </span>
-                ))}
-              </div>
-            </div>
 
             {/* Resume Upload */}
             <div className="form-group">
@@ -296,56 +179,23 @@ function SubmitFile() {
           <>
             {/* Employer Form */}
             <div className="form-group">
-              <label htmlFor="jobTitle">Job Title:</label>
+              <label htmlFor="name">Company Name:</label>
               <input
                 type="text"
-                name="jobTitle"
-                value={formData.jobTitle}
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
-                placeholder="Enter the job title"
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="compName">Company Name:</label>
-              <input
-                type="text"
-                name="compName"
-                value={formData.compName}
-                onChange={handleChange}
-                placeholder="Enter the company name"
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="compEmail">Company Email:</label>
-              <input
-                type="email"
-                name="compEmail"
-                value={formData.compEmail}
-                onChange={handleChange}
-                placeholder="Enter the company email"
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="compSkill">Skill you are looking for:</label>
-              <input
-                type="text"
-                name="compSkill"
-                value={formData.compSkill}
-                onChange={handleChange}
-                placeholder="Enter the skill you are looking for"
+                placeholder="Enter your company name"
                 required
               />
             </div>
 
-            {/* Employer Resume Upload */}
+            {/* Resume Upload */}
             <div className="form-group">
-              <label htmlFor="employerResume">Upload Job Description Document (.txt):</label>
+              <label htmlFor="resume">Upload Job Description (.txt):</label>
               <input
                 type="file"
-                name="employerResume"
+                name="resume"
                 accept=".txt"
                 onChange={handleFileChange}
                 required
