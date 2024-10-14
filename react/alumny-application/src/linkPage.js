@@ -9,6 +9,7 @@ function linkpage() {
       <li><Link to='/mainpage'>Main Page </Link></li>
       <li><Link to='/profilepage'>Profile Page </Link></li>
       <li><Link to='/test'>test </Link></li>
+      <li><Link to='/testjob'>test (Employers) </Link></li>
     </div>);
   }
   
