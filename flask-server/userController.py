@@ -130,43 +130,43 @@ def insertSkill(conn, skill_name, category):
     conn.commit()
     return cur.lastrowid
 
-
+#changed from employee ID to listing_id, changed employer_Skills to job_skills
 def addSkillToEmployer(conn, employer_id, skill, skill_id):
     """
-    Insert the skill into the Employer_Skills table for the given employer.
+    Insert the skill into the Job_Skills table for the given employer.
     """
     try:
         cur = conn.cursor()
         cur.execute('''
-            INSERT INTO Employer_Skills (Skill_Name, Employer_ID, Skill_id)
+            INSERT INTO Job_Skills (Skill_Name, listing_id, Skill_id)
             VALUES (?, ?, ?)
         ''', (skill, employer_id, skill_id))
         conn.commit()
-        print(f"Skill '{skill}' added to employer ID {employer_id} in Employer_Skills.")
+        print(f"Skill '{skill}' added to employer ID {employer_id} in job_skills.")
     except sqlite3.Error as e:
-        print(f"Error adding skill '{skill}' for employer ID {employer_id} in Employer_Skills: {e}")
-
-def getJobDesc(conn, employer_id):
+        print(f"Error adding skill '{skill}' for employer ID {employer_id} in job_skills: {e}")
+#changed to listing_ID from employer_ID
+def getJobDesc(conn, listing_id):
     """
-    Retrieve the job description (Plaintext) for a given employer ID.
+    Retrieve the job description (Plaintext) for a given Listing_ID.
     """
     try:
-        query = '''SELECT Plaintext FROM Job_Listing WHERE Employer_ID = ?'''
+        query = '''SELECT Plaintext FROM Job_Listing WHERE Listing_ID = ?'''
         cur = conn.cursor()
-        cur.execute(query, (employer_id,))
+        cur.execute(query, (listing_id,))
         result = cur.fetchone()
         if result:
             return result[0]  # Return the job description text
         else:
             return None  # If no job description is found
     except sqlite3.Error as e:
-        print(f"Error retrieving job description for employer ID {employer_id}: {e}")
+        print(f"Error retrieving job description for Listing_ID {listing_id}: {e}")
         return None
-
+#changed query to listing_id from employer_id
 def checkSkillExistsForEmployer(conn, employer_id, skill_id):
     query = """
-    SELECT 1 FROM Employer_Skills 
-    WHERE employer_id = ? AND skill_id = ?
+    SELECT 1 FROM Job_Skills 
+    WHERE Listing_ID = ? AND skill_id = ?
     """
     cur = conn.cursor()
     cur.execute(query, (employer_id, skill_id))

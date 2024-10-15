@@ -11,6 +11,7 @@ import SubmitFile from './submitFile';
 import { UserProvider } from './UserContext';  // Import UserProvider
 import './App.css';  // New CSS file for consistent styling
 import Test from './test'
+import TestJob from './testjob';
 
 function App() {
   const location = useLocation();
@@ -32,6 +33,7 @@ function App() {
         <Route path="/submit-file" element={<SubmitFile />} />
         <Route path='/test'element={<Test/>}/>
         <Route path="/profile/:userId" element={<ProfilePage />} />
+        <Route path="/testjob" element={<TestJob />} />
       </Routes>
     </UserProvider>
     </div>

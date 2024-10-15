@@ -49,14 +49,14 @@ function Test() {
             setError(err.message);
             console.log(err);
         }
-    }
+    };
     const loadskills = async () =>{
         setError(null); // set error to null
         try{
             //once user is set, retrieve their skills
             const skillslist = await fetch(`/skillsemp/${userId}`);
             if (!skillslist.ok){
-                return; // terminate early if no skills
+                throw new Error("skills not found"); // Handle errors
             }
             const skillsdata = await skillslist.json(); // Parse the response JSON
             setSkills(skillsdata);
@@ -64,7 +64,7 @@ function Test() {
             setError(err.message);
             console.log(err);
         }
-    }
+    };
     const addSkill = async (e) => {
         setError(null); // set error to null
         try {
@@ -79,7 +79,7 @@ function Test() {
             setError(err.message);
             console.log(err);
         }
-    }
+    };
     const deleteskill = async (e) => {
         setError(null); // set error to null
         try {
@@ -94,7 +94,7 @@ function Test() {
             setError(err.message);
             console.log(err);
         }
-    }
+    };
     const extractskills = async () => {
         setError(null); // set error to null
         try{
@@ -108,7 +108,7 @@ function Test() {
             setError(err.message);
             console.log(err);
         }
-    }
+    };
     const deleteskills = async () => {
         setError(null); // set error to null
         try{
@@ -122,7 +122,7 @@ function Test() {
             setError(err.message);
             console.log(err);
         }
-    }
+    };
     const createAccount = async (e) =>{
         setError(null); // set error to null
         try{
@@ -139,7 +139,7 @@ function Test() {
             setError(err.message);
             console.log(err);
         }
-    }
+    };
     const uploadresume = async (e) =>{
         setError(null); // set error to null
         try{
@@ -155,7 +155,7 @@ function Test() {
             setError(err.message);
             console.log(err);
         }
-    } 
+    };
     const removeResume = async () =>{
         setError(null); // set error to null
         try{
@@ -170,7 +170,7 @@ function Test() {
             console.log(err);
         }
 
-    }
+    };
     const deleteaccount = async (e) => {
         setError(null); // set error to null
         try{
@@ -187,7 +187,7 @@ function Test() {
             console.log(err);
         }
         
-    }
+    };
     return (
         <div>
             <p>Welcome {user ? user.Name : 'guest'}</p> {/* Display user name if found */}
