@@ -46,7 +46,7 @@ const ProfilePage = () => {
           <>
             {/* Left Section: Profile Image and Basic Info */}
             <div className="profile-left">
-              <img src="profile-picture.png" alt={user.Name} className="profile-image" />
+              {/* <img src="profile-picture.png" alt={user.Name} className="profile-image" /> */}
               <h2 className="profile-name">{user.Name}</h2>
               <p className="profile-role">Student/Employer</p> {/* You can adjust the role dynamically */}
               <div className="profile-details">

@@ -42,7 +42,7 @@ def loadSkillData(conn,folderPath):
 #Just to load the data and for testing purposes can be deleted later
 if __name__ == '__main__':
     folderPath = 'testData'
-    conn = userController.createConnection('Alumny.db')
+    conn = userController.createConnection('Alumnyprod.db')
     loadJobTestData(conn, folderPath)
     loadSkillData(conn,folderPath)
     userController.closeConnection(conn)

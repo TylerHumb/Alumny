@@ -1,36 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './submitFile.css';
 import Navbar from './Navbar.js';
-import { useNavigate, useLocation } from 'react-router-dom';  // Import useLocation to get query parameters
+import { useNavigate, useLocation } from 'react-router-dom';
+import { ring2 } from 'ldrs';  // Import the ring2 component
 
-// const skills = ['Communication', 'Time Management', 'Leadership', 'Problem Solving', 'Critical Thinking'];
+ring2.register();  // Register the loader
 
 function SubmitFile() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const initialTab = queryParams.get('tab') || 'Student';  // Get 'tab' from query params, default to 'Student'
+  const initialTab = queryParams.get('tab') || 'Student';
 
-  const [activeTab, setActiveTab] = useState(initialTab);  // Initialize active tab from URL param
-  // const [selectedSkills, setSelectedSkills] = useState([]);
-  const [formData, setFormData] = useState({
-    name: '',
-    resume: null,
-  });
-
-  const navigate = useNavigate();  // For navigation after submission
+  const [activeTab, setActiveTab] = useState(initialTab);
+  const [formData, setFormData] = useState({ name: '', resume: null });
+  const [loading, setLoading] = useState(false);  // Add loading state
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
+    setFormData({ ...formData, [name]: value });
   };
 
-  // Handle file selection for text files (resume)
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
-
     if (file && file.type === 'text/plain') {
       const reader = new FileReader();
       reader.onload = () => {
@@ -42,11 +34,9 @@ function SubmitFile() {
     }
   };
 
-  // Submit the employee name and create the employee
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const employeeName = formData.name;  // 'name' is the employee name
+    const employeeName = formData.name;
 
     if (!employeeName) {
       alert("Please provide a name.");
@@ -54,74 +44,48 @@ function SubmitFile() {
     }
 
     try {
-      // Send a POST request to the backend with employee name in the URL
-      const response = await fetch(`/createemp/${encodeURIComponent(employeeName)}`, {
-        method: 'POST'
-      });
+      setLoading(true);  // Start loading
+      const response = await fetch(`/createemp/${encodeURIComponent(employeeName)}`, { method: 'POST' });
 
       if (!response.ok) {
         throw new Error('Error creating employee');
       }
 
       const result = await response.json();
-
-      console.log('Success:', result);
       alert(`Employee created successfully with ID: ${result.userid}`);
 
-      // After creating the employee, update the resume
       const resumeContent = formData.resume;
       if (resumeContent) {
-        await updateResume(result.userid, resumeContent);  // Call the function to update resume
-
-        // Once the resume is updated, extract skills from the resume
-        await extractSkills(result.userid);  // Extract skills after updating resume
+        await updateResume(result.userid, resumeContent);
+        await extractSkills(result.userid);
       }
     } catch (error) {
       console.error('Error creating employee:', error);
       alert('An error occurred during submission.');
+    } finally {
+      setLoading(false);  // Stop loading
     }
   };
 
-  // Function to update the resume of the newly created employee
   const updateResume = async (employeeId, resumeContent) => {
     try {
       const response = await fetch(`/resume/${employeeId}/${encodeURIComponent(resumeContent)}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        headers: { 'Content-Type': 'application/json' }
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Resume updated successfully:', result);
-      } else {
-        console.error('Error updating resume');
-        alert('Failed to update resume.');
-      }
+      if (!response.ok) throw new Error('Error updating resume');
     } catch (error) {
       console.error('Error submitting the resume:', error);
       alert('An error occurred during resume submission.');
     }
   };
 
-  // Function to extract skills from the resume for the employee
   const extractSkills = async (employeeId) => {
     try {
-      const response = await fetch(`/extractskillsemp/${employeeId}`, {
-        method: 'GET'
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Skills extracted successfully:', result);
-
-        // After successful skill extraction, navigate to the skills page
-        navigate(`/profile/${employeeId}`);
-      } else {
-        console.error('Error extracting skills');
-        alert('Failed to extract skills.');
-      }
+      const response = await fetch(`/extractskillsemp/${employeeId}`, { method: 'GET' });
+      if (!response.ok) throw new Error('Failed to extract skills.');
+      navigate(`/profile/${employeeId}`);
     } catch (error) {
       console.error('Error extracting skills:', error);
       alert('An error occurred during skill extraction.');
@@ -147,64 +111,75 @@ function SubmitFile() {
         </button>
       </div>
 
-      <form onSubmit={handleSubmit}>
-        {activeTab === 'Student' ? (
-          <>
-            {/* Student Form */}
-            <div className="form-group">
-              <label htmlFor="name">Name:</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Enter your name"
-                required
-              />
-            </div>
+      {/* Conditionally show loading animation */}
+      {loading ? (
+        <div className="loading-container">
+          <l-ring-2
+            size="40"
+            stroke="5"
+            stroke-length="0.25"
+            bg-opacity="0.1"
+            speed="0.8"
+            color="black"
+          ></l-ring-2>
+          <p>Processing, please wait...</p>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit}>
+          {activeTab === 'Student' ? (
+            <>
+              <div className="form-group">
+                <label htmlFor="name">Name:</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Enter your name"
+                  required
+                />
+              </div>
 
-            {/* Resume Upload */}
-            <div className="form-group">
-              <label htmlFor="resume">Upload Resume (.txt):</label>
-              <input
-                type="file"
-                name="resume"
-                accept=".txt"
-                onChange={handleFileChange}
-                required
-              />
-            </div>
-          </>
-        ) : (
-          <>
-            {/* Employer Form */}
-            <div className="form-group">
-              <label htmlFor="name">Company Name:</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Enter your company name"
-                required
-              />
-            </div>
+              <div className="form-group">
+                <label htmlFor="resume">Upload Resume (.txt):</label>
+                <input
+                  type="file"
+                  name="resume"
+                  accept=".txt"
+                  onChange={handleFileChange}
+                  required
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="form-group">
+                <label htmlFor="name">Company Name:</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Enter your company name"
+                  required
+                />
+              </div>
 
-            {/* Resume Upload */}
-            <div className="form-group">
-              <label htmlFor="resume">Upload Job Description (.txt):</label>
-              <input
-                type="file"
-                name="resume"
-                accept=".txt"
-                onChange={handleFileChange}
-                required
-              />
-            </div>
-          </>
-        )}
-        <button type="submit" className="submit-button">Submit</button>
-      </form>
+              <div className="form-group">
+                <label htmlFor="resume">Upload Job Description (.txt):</label>
+                <input
+                  type="file"
+                  name="resume"
+                  accept=".txt"
+                  onChange={handleFileChange}
+                  required
+                />
+              </div>
+            </>
+          )}
+          <button type="submit" className="submit-button">Submit</button>
+        </form>
+      )}
     </div>
   );
 }

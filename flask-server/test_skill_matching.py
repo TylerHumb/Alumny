@@ -3,7 +3,7 @@ import userController
 # Main script for testing the matching functionality
 if __name__ == "__main__":
     # Use the connection function from userController.py
-    conn = userController.createConnection('Alumny.db')
+    conn = userController.createConnection('Alumnyprod.db')
 
     if conn:
         # Ask the user for the employee ID to test matching
