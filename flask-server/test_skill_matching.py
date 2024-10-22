@@ -1,25 +1,55 @@
 import userController
 
-# Main script for testing the matching functionality
 if __name__ == "__main__":
-    # Use the connection function from userController.py
-    conn = userController.createConnection('Alumnyprod.db')
+    # Create a connection to the database
+    conn = userController.createConnection('Alumny.db')
 
     if conn:
-        # Ask the user for the employee ID to test matching
-        employee_id = int(input("Enter the employee ID: "))
+        # Ask the user whether they want to match an employee or an employer
+        choice = input("Enter '1' to match an employee to employers, or '2' to match an employer to employees: ")
 
-        # Call the match_employee_to_employer function from userController.py
-        matched_employers = userController.match_employee_to_employer(conn, employee_id, min_matches=5)
+        if choice == '1':
+            # Match employee to employers
+            employee_id = int(input("Enter the employee ID: "))
+            matched_employers = userController.match_employee_to_employers(conn, employee_id)
 
-        # Display the results
-        if matched_employers:
-            print(f"Employers with at least 5 matching skills for employee ID {employee_id}:")
-            for employer_id, match_count, matching_skills in matched_employers:
-                print(f"Employer ID: {employer_id}, Matching Skills: {match_count}")
-                print(f"Skills: {', '.join(matching_skills)}\n")
+            # Sort by number of matching skills in descending order
+            matched_employers = sorted(matched_employers, key=lambda x: x[1], reverse=True)
+
+            if matched_employers:
+                print(f"\nEmployers matched for employee ID {employee_id} (sorted by most matches):\n")
+                for employer_id, match_count, total_possible, matching_skills in matched_employers:
+                    print(f"Employer ID: {employer_id}")
+                    print(f"Matching Skills: {match_count}/{total_possible}")
+                    if matching_skills:
+                        print(f"Skills: {', '.join(matching_skills)}\n")
+                    else:
+                        print("No matching skills.\n")
+            else:
+                print(f"No employers found for employee ID {employee_id}.")
+
+        elif choice == '2':
+            # Match employer to employees
+            employer_id = int(input("Enter the employer ID: "))
+            matched_employees = userController.match_employer_to_employees(conn, employer_id)
+
+            # Sort by number of matching skills in descending order
+            matched_employees = sorted(matched_employees, key=lambda x: x[1], reverse=True)
+
+            if matched_employees:
+                print(f"\nEmployees matched for employer ID {employer_id} (sorted by most matches):\n")
+                for employee_id, match_count, total_possible, matching_skills in matched_employees:
+                    print(f"Employee ID: {employee_id}")
+                    print(f"Matching Skills: {match_count}/{total_possible}")
+                    if matching_skills:
+                        print(f"Skills: {', '.join(matching_skills)}\n")
+                    else:
+                        print("No matching skills.\n")
+            else:
+                print(f"No employees found for employer ID {employer_id}.")
+
         else:
-            print(f"No employers found with at least 5 matching skills for employee ID {employee_id}.")
+            print("Invalid choice. Please enter '1' or '2'.")
 
-        # Use the closeConnection function from userController.py
+        # Close the database connection
         userController.closeConnection(conn)
