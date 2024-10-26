@@ -1,6 +1,6 @@
-import sqlite3   
+import sqlite3
 from sqlite3 import Error
-  
+
 # Create a connection to sqlite database
 def createConnection(db_file):
     conn = None
@@ -29,7 +29,7 @@ def addEmployer(conn, employer):
         cur.execute(sql, (employer,))
         conn.commit()
         return cur.lastrowid
-    
+
 def addJobDesc(conn, jobDesc, employerId):
     check_sql = ''' SELECT Listing_ID FROM Job_Listing WHERE Plaintext = ? '''
     cur = conn.cursor()
@@ -42,7 +42,7 @@ def addJobDesc(conn, jobDesc, employerId):
         cur.execute(sql, (jobDesc, employerId))
         conn.commit()
         return cur.lastrowid
-    
+
 def addEmployee(conn, name, plaintext):
     check_sql = ''' SELECT Employee_ID FROM Employee WHERE Name = ? '''
     cur = conn.cursor()
@@ -55,11 +55,12 @@ def addEmployee(conn, name, plaintext):
         cur.execute(sql, (name, plaintext))
         conn.commit()
         return cur.lastrowid
-#Row is a line from the csv file, first entry is the skill name/desc and the second is its category    
-def addSkill(conn,row,id):
+
+# Row is a line from the csv file, first entry is the skill name/desc and the second is its category
+def addSkill(conn, row, id):
     query = '''INSERT INTO Skills_List VALUES(?,?,?)'''
     cur = conn.cursor()
-    cur.execute(query, (id,row[0],row[1]))
+    cur.execute(query, (id, row[0], row[1]))
     conn.commit()
 
 def getAllSkills(conn):
@@ -103,7 +104,7 @@ def addSkillToEmployee(conn, employee_id, skill, skill_id):
 
 def addSkillToTemp(conn, skill, category):
     """
-    Insert the skill into the Temp_Skills table for the given employee.
+    Insert the skill into the Temp_Skills table.
     """
     try:
         cur = conn.cursor()
@@ -112,9 +113,9 @@ def addSkillToTemp(conn, skill, category):
             VALUES (?, ?)
         ''', (skill, category))
         conn.commit()
-        print(f"Skill '{skill}' Category '{category}, in Temp_Skills.")
+        print(f"Skill '{skill}' Category '{category}', added to Temp_Skills.")
     except sqlite3.Error as e:
-        print(f"Error adding skill '{skill}' Category '{category} in Temp_Skills: {e}")
+        print(f"Error adding skill '{skill}' Category '{category}' in Temp_Skills: {e}")
 
 def getSkillId(conn, skill):
     query = '''SELECT Skill_ID FROM Skills_List WHERE Skill_Name = ?'''
@@ -130,22 +131,21 @@ def insertSkill(conn, skill_name, category):
     conn.commit()
     return cur.lastrowid
 
-#changed from employee ID to listing_id, changed employer_Skills to job_skills
-def addSkillToEmployer(conn, employer_id, skill, skill_id):
+def addSkillToJob(conn, listing_id, skill, skill_id):
     """
-    Insert the skill into the Job_Skills table for the given employer.
+    Insert the skill into the Job_Skills table for the given job listing.
     """
     try:
         cur = conn.cursor()
         cur.execute('''
-            INSERT INTO Job_Skills (Skill_Name, listing_id, Skill_id)
+            INSERT INTO Job_Skills (Skill_Name, Listing_ID, Skill_id)
             VALUES (?, ?, ?)
-        ''', (skill, employer_id, skill_id))
+        ''', (skill, listing_id, skill_id))
         conn.commit()
-        print(f"Skill '{skill}' added to employer ID {employer_id} in job_skills.")
+        print(f"Skill '{skill}' added to job listing ID {listing_id} in Job_Skills.")
     except sqlite3.Error as e:
-        print(f"Error adding skill '{skill}' for employer ID {employer_id} in job_skills: {e}")
-#changed to listing_ID from employer_ID
+        print(f"Error adding skill '{skill}' for listing ID {listing_id} in Job_Skills: {e}")
+
 def getJobDesc(conn, listing_id):
     """
     Retrieve the job description (Plaintext) for a given Listing_ID.
@@ -162,14 +162,14 @@ def getJobDesc(conn, listing_id):
     except sqlite3.Error as e:
         print(f"Error retrieving job description for Listing_ID {listing_id}: {e}")
         return None
-#changed query to listing_id from employer_id
-def checkSkillExistsForEmployer(conn, employer_id, skill_id):
+
+def checkSkillExistsForJob(conn, listing_id, skill_id):
     query = """
     SELECT 1 FROM Job_Skills 
     WHERE Listing_ID = ? AND skill_id = ?
     """
     cur = conn.cursor()
-    cur.execute(query, (employer_id, skill_id))
+    cur.execute(query, (listing_id, skill_id))
     return cur.fetchone() is not None
 
 def checkSkillExistsForEmployee(conn, employee_id, skill_id):
@@ -181,11 +181,10 @@ def checkSkillExistsForEmployee(conn, employee_id, skill_id):
     cur.execute(query, (employee_id, skill_id))
     return cur.fetchone() is not None
 
-
-#### MAtching
-def match_employee_to_employers(conn, employee_id):
+#### Matching Functions
+def match_employee_to_jobs(conn, employee_id):
     """
-    Match employee skills to all employers.
+    Match employee skills to all job listings.
     - conn: The database connection.
     - employee_id: The employee ID to search for.
     """
@@ -199,51 +198,49 @@ def match_employee_to_employers(conn, employee_id):
             print(f"No skills found for employee ID {employee_id}.")
             return []
 
-        # Retrieve all employers' skills and match them
-        cur.execute('SELECT DISTINCT Employer_ID FROM Employer_Skills')
-        employers = [row[0] for row in cur.fetchall()]
+        # Retrieve all job listings
+        cur.execute('SELECT DISTINCT Listing_ID FROM Job_Skills')
+        listings = [row[0] for row in cur.fetchall()]
 
-        matched_employers = []
+        matched_listings = []
 
-        for employer_id in employers:
-            # Retrieve the employer's skills
-            cur.execute('SELECT Skill_Name FROM Employer_Skills WHERE Employer_ID = ?', (employer_id,))
-            employer_skills = [row[0] for row in cur.fetchall()]
+        for listing_id in listings:
+            # Retrieve the job's skills
+            cur.execute('SELECT Skill_Name FROM Job_Skills WHERE Listing_ID = ?', (listing_id,))
+            listing_skills = [row[0] for row in cur.fetchall()]
 
             # Count the number of matching skills
-            matching_skills = set(employee_skills).intersection(set(employer_skills))
+            matching_skills = set(employee_skills).intersection(set(listing_skills))
 
-            # Calculate the total number of possible matches (total skills the employer has)
-            total_possible_matches = len(employer_skills)
+            # Calculate the total number of possible matches (total skills the job listing has)
+            total_possible_matches = len(listing_skills)
 
-            # Add employer to the matched list with the match count and the total possible matches
-            matched_employers.append((employer_id, len(matching_skills), total_possible_matches, matching_skills))
+            # Add job listing to the matched list with the match count and the total possible matches
+            matched_listings.append((listing_id, len(matching_skills), total_possible_matches, matching_skills))
 
-        return matched_employers
+        return matched_listings
 
     except sqlite3.Error as e:
         print(f"Error matching skills: {e}")
         return []
 
-
-# Match employer's skills to all employees
-def match_employer_to_employees(conn, employer_id):
+def match_job_to_employees(conn, listing_id):
     """
-    Match employer skills to all employees.
+    Match job listing skills to all employees.
     - conn: The database connection.
-    - employer_id: The employer ID to search for.
+    - listing_id: The job listing ID to search for.
     """
     try:
-        # Retrieve employer's skills
+        # Retrieve job listing's skills
         cur = conn.cursor()
-        cur.execute('SELECT Skill_Name FROM Employer_Skills WHERE Employer_ID = ?', (employer_id,))
-        employer_skills = [row[0] for row in cur.fetchall()]
+        cur.execute('SELECT Skill_Name FROM Job_Skills WHERE Listing_ID = ?', (listing_id,))
+        job_skills = [row[0] for row in cur.fetchall()]
 
-        if not employer_skills:
-            print(f"No skills found for employer ID {employer_id}.")
+        if not job_skills:
+            print(f"No skills found for listing ID {listing_id}.")
             return []
 
-        # Retrieve all employees' skills and match them
+        # Retrieve all employees
         cur.execute('SELECT DISTINCT Employee_ID FROM Employee_Skills')
         employees = [row[0] for row in cur.fetchall()]
 
@@ -255,7 +252,7 @@ def match_employer_to_employees(conn, employer_id):
             employee_skills = [row[0] for row in cur.fetchall()]
 
             # Count the number of matching skills
-            matching_skills = set(employer_skills).intersection(set(employee_skills))
+            matching_skills = set(job_skills).intersection(set(employee_skills))
 
             # Calculate the total number of possible matches (total skills the employee has)
             total_possible_matches = len(employee_skills)
