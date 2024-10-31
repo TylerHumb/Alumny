@@ -2,9 +2,11 @@ import userController
 
 if __name__ == "__main__":
     # Create a connection to the database
-    conn = userController.createConnection('Alumnyprod.db')
+    conn = userController.createConnection(r'C:\Users\Isaac\Desktop\alumny\Alumny\flask-server\Alumnyprod.db')
+    # conn = userController.createConnection('Alumnyprod.db')
 
     if conn:
+        userController.list_tables(conn)
         # Ask the user whether they want to match an employee or a job listing
         choice = input("Enter '1' to match an employee to job listings, or '2' to match a job listing to employees: ")
 

@@ -2,11 +2,14 @@ import sqlite3
 from sqlite3 import Error
 
 # Create a connection to sqlite database
+import os
+
 def createConnection(db_file):
     conn = None
     try:
         conn = sqlite3.connect(db_file)
         print(f"Connection to {db_file} database successful.")
+        print(f"Database file path: {os.path.abspath(db_file)}")
     except Error as e:
         print(f"Error: {e}")
     return conn
@@ -262,6 +265,14 @@ def match_job_to_employees(conn, listing_id):
 
         return matched_employees
 
+
     except sqlite3.Error as e:
         print(f"Error matching skills: {e}")
         return []
+def list_tables(conn):
+    cur = conn.cursor()
+    cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    tables = cur.fetchall()
+    print("\nTables in the database:")
+    for table in tables:
+        print(table[0])
